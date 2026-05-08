@@ -1,0 +1,92 @@
+package com.example.demo1.configuration;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.cors.reactive.CorsWebFilter;
+
+@Configuration
+public class GatewayConfig {
+
+        @Autowired
+        private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+        @Autowired
+        private User_Role_Based_Key_Resolver keyResolver;
+
+        // Centralized RedisRateLimiter beans
+
+        @Bean
+        public RedisRateLimiter redisRateLimiter() {
+                return new RedisRateLimiter(15, 25); // 3 requests/sec, burst 5
+        }
+       @Bean
+       public CorsWebFilter corsFilter() {
+                org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
+                config.setAllowCredentials(true);
+                config.setAllowedOrigins(List.of("http://localhost:4200"));
+                config.addAllowedHeader("*");
+                config.addAllowedMethod("*");
+                org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", config);
+
+                return new CorsWebFilter(source);
+        }
+        @Bean
+        public RouteLocator customRoutes(RouteLocatorBuilder builder) {
+                return builder.routes()
+
+                                // Doctor Service
+                                .route("doctor-service", r -> r.path("/doctor/**")
+                                                .filters(f -> f.filter(jwtAuthenticationFilter)
+                                                                .requestRateLimiter(c -> {
+                                                                        c.setKeyResolver(keyResolver);
+                                                                        c.setRateLimiter(redisRateLimiter());
+                                                                }))
+                                                .uri("lb://doctor-service"))
+
+                                // Patient Service
+                                .route("patients-service", r -> r.path("/patients/**")
+                                                .filters(f -> f.filter(jwtAuthenticationFilter)
+                                                                .requestRateLimiter(c -> {
+                                                                        c.setKeyResolver(keyResolver);
+                                                                        c.setRateLimiter(redisRateLimiter());
+                                                                }))
+                                                .uri("lb://patients-service"))
+
+                                // Admin Service (no rate limiting)
+                                .route("admin-service", r -> r.path("/admin/**")
+                                                .filters(f -> f.filter(jwtAuthenticationFilter))
+                                                .uri("lb://admin-service"))
+
+                                // Auth Service (public)
+                                .route("auth-service", r -> r.path("/auth-service/**")
+                                                .uri("lb://auth-service"))
+
+                                // Appointment Service
+                                .route("appointment-service", r -> r.path("/appointment/**")
+                                                .filters(f -> f
+                                                        .filter(jwtAuthenticationFilter)
+                                                                .requestRateLimiter(c -> {
+                                                                        c.setKeyResolver(keyResolver);
+                                                                        c.setRateLimiter(redisRateLimiter());
+                                                                }))
+                                                .uri("lb://appointment-service"))
+
+                                // Notification Service (public or no JWT)
+                                .route("notification-service", r -> r.path("/notification/**")
+                                                .uri("lb://notification-service"))
+
+                                // Payments Service
+                                .route("payments-service", r -> r.path("/payments/**")
+                                               // .filters(f -> f.filter(jwtAuthenticationFilter))
+                                                .uri("lb://payments-service"))
+
+                                .build();
+        }
+}

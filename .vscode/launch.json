@@ -1,0 +1,99 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "PaymentsServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.PaymentsServiceApplication",
+            "projectName": "payments-service"
+        },
+        {
+            "type": "java",
+            "name": "AiServiceApplication",
+            "request": "launch",
+            "mainClass": "ai.service.ai_service.AiServiceApplication",
+            "projectName": "ai-service"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "AdminMicroserviceApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.AdminMicroserviceApplication",
+            "projectName": "Admin_Microservice"
+        },
+        {
+            "type": "java",
+            "name": "AppointmentMicroserviceApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.AppointmentMicroserviceApplication",
+            "projectName": "AppointmentMicroservice"
+        },
+        {
+            "type": "java",
+            "name": "BasicSecurityApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.BasicSecurityApplication",
+            "projectName": "DoctorService"
+        },
+        {
+            "type": "java",
+            "name": "EntryPointGatewayApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.EntryPointGatewayApplication",
+            "projectName": "EntryPoint_Gateway"
+        },
+        {
+            "type": "java",
+            "name": "EurekaServerApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.EurekaServerApplication",
+            "projectName": "EurekaServer"
+        },
+        {
+            "type": "java",
+            "name": "NotificationServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.NotificationServiceApplication",
+            "projectName": "Notification_Service"
+        },
+        {
+            "type": "java",
+            "name": "PatientsMicroservicesApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.PatientsMicroservicesApplication",
+            "projectName": "Patients_Microservices"
+        },
+        {
+            "type": "java",
+            "name": "PaymentsServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.demo1.PaymentsServiceApplication",
+            "projectName": "Payment_Service"
+        },
+        {
+            "type": "java",
+            "name": "JwtAuthorApplication",
+            "request": "launch",
+            "mainClass": "com.example.jwt.jwt_author.JwtAuthorApplication",
+            "projectName": "jwt-author"
+        },
+        {
+            "type": "java",
+            "name": "AuthServiceApplication (DEV)",
+            "request": "launch",
+            "mainClass": "com.example.demo1.AuthServiceApplication",
+            "projectName": "AuthService",
+            "vmArgs": "-Dspring.profiles.active=dev"
+        }
+    ]
+}
