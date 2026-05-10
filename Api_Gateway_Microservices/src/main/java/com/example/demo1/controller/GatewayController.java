@@ -8,10 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/gateway")
 public class GatewayController {
 	
-	@GetMapping("/home")
-	public String home() {
-		return "home";
-	}
+	
 	
 	@GetMapping("/checked-new")
 	public String check() {
