@@ -25,6 +25,8 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+
+import com.example.demo1.exception.AuthAccessDeniedHandler;
 @Configuration
 @EnableWebSecurity
 public class AuthConfiguration {
@@ -84,7 +86,8 @@ public class AuthConfiguration {
 		try {
 			http.csrf().disable().authorizeHttpRequests(auth->auth.requestMatchers("/auth-service/**").permitAll()
 					.anyRequest().authenticated())
-			.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+			.sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.exceptionHandling(ex-> ex.accessDeniedHandler(new AuthAccessDeniedHandler()));
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
