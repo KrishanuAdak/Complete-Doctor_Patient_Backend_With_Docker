@@ -63,7 +63,7 @@ public class AuthService {
 		return this.repo.getEmailByPatientId(patient_id);
 	}
 	public String login(AuthDB auth) {
-		if(auth!=null) {
+		logger.info("Login attempt for email: {}", auth.getEmail());
 			authManager.authenticate(
 					new UsernamePasswordAuthenticationToken(auth.getEmail(), auth.getPassword()));
 					System.out.println("role from service class"+auth.getRole());
@@ -72,7 +72,6 @@ public class AuthService {
 	    return token;
 	    
 	}
-	return null;
-	}
+	
 
 }
