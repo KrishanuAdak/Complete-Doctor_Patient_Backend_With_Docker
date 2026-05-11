@@ -26,14 +26,10 @@ public class AuthController {
 	@Value("${server.port}")
 	private String port;
 
-	@GetMapping("/test")
-	public String test() {
-		return "Tested";
-	}
+	
 
 	@GetMapping("/port")
 	public String getPort() {
-		// return "Pir";
 		System.out.println("Port -- " + port);
 		return "Port running on " + port;
 	}
