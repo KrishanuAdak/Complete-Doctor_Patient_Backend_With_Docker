@@ -26,6 +26,11 @@ public class AuthController {
 	@Value("${server.port}")
 	private String port;
 
+	@GetMapping("/test")
+	public String test() {
+		return "Tested";
+	}
+
 	@GetMapping("/port")
 	public String getPort() {
 		// return "Pir";
@@ -67,10 +72,6 @@ public class AuthController {
 	@GetMapping("/patient/{id}")
 	public String getEmailById(@PathVariable("id") int patient_id) {
 		return this.service.getEmail(patient_id);
-	}
-	@GetMapping("/test")
-	public String test(){
-		return "Tested";
 	}
 
 }
