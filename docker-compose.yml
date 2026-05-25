@@ -30,6 +30,22 @@ services:
       start_period: 20s
     networks:
       - app-network
+  # chromadb:
+  #   image: chromadb/chroma
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - chromadb_data:/data
+  #   environment:
+  #     - IS_PERSISTENT=TRUE
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f"]
+  #     interval: 1m30s
+  #     timeout: 30s
+  #     retries: 5
+  #     start_period: 30s 
+  #   networks:
+  #     - app-network
 
   kafka:
     image: confluentinc/cp-kafka:7.6.0
@@ -132,8 +148,19 @@ services:
       SPRING_PROFILES_ACTIVE: docker 
     networks:
       - app-network
+  ai-service:
+    image: ai-service
+    ports:
+      - "7001:7001"
+    depends_on:
+       eureka:
+          condition: service_started
+      # - chromadb:
+      #     condition: service_started
 
 
 networks:
   app-network:
     driver: bridge
+# rds pass wHk4tSHBTxrmKRmMYhDSZ
+#  ecr 846210185519.dkr.ecr.ap-south-1.amazonaws.com/appointment-booking

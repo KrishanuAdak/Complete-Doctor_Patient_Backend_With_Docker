@@ -8,7 +8,6 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
-// import org.springframework.web.reactive.function.client.WebClient;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
@@ -37,6 +36,15 @@ public class AiConfig {
     public EmbeddingStore<TextSegment> embeddingStore() {
         return new InMemoryEmbeddingStore<>();
     }
+      //  @Bean
+    // public EmbeddingStore<TextSegment> embeddingStore() {
 
+    //     return ChromaEmbeddingStore.builder()
+    //             .baseUrl("http://chromadb:1000")
+    //             .collectionName("doctor-ai")
+    //            // .embeddingModel(embeddingModel())
+    //             .build();
+    // }
 
+   
 }
