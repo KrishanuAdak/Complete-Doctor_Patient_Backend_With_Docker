@@ -13,10 +13,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       # Checkout Code
       - name: Checkout
         uses: actions/checkout@v4
+
+      # Setup Java
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Build all microservices
+      - name: Build Eureka Server
+        run: cd EurekaServer_Microservice && mvn clean package -DskipTests
+
+      - name: Build Patient Service
+        run: cd Patients_Microservices && mvn clean package -DskipTests
+
+      - name: Build Doctor Service
+        run: cd Doctor_Microservice && mvn clean package -DskipTests
+
+      - name: Build Appointment Service
+        run: cd Appointment_Microservices && mvn clean package -DskipTests
+
+      - name: Build Auth Service
+        run: cd AuthService && mvn clean package -DskipTests
+
+      - name: Build API Gateway
+        run: cd Api_Gateway_Microservices && mvn clean package -DskipTests
 
       # Configure AWS
       - name: Configure AWS
@@ -31,8 +56,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Build & Push Images
-     
+      # Build & Push Docker Images (now target/ will exist)
       - name: Build Eureka
         run: |
           cd EurekaServer_Microservice
@@ -67,13 +91,13 @@ jobs:
           docker build -t auth-service .
           docker tag auth-service:latest ${{ secrets.ECR_REGISTRY }}/auth-service:latest
           docker push ${{ secrets.ECR_REGISTRY }}/auth-service:latest
+
       - name: Build API Gateway
         run: |
           cd Api_Gateway_Microservices
           docker build -t api-gateway .
           docker tag api-gateway:latest ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
           docker push ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
-
 
       # Deploy To EC2
       - name: Deploy EC2
@@ -82,19 +106,14 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-
           script: |
             cd appointment-booking-microservices
-
             aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
-
             docker compose down
-
             docker pull ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
             docker pull ${{ secrets.ECR_REGISTRY }}/eureka-service:latest
             docker pull ${{ secrets.ECR_REGISTRY }}/patient-service:latest
             docker pull ${{ secrets.ECR_REGISTRY }}/doctor-service:latest
             docker pull ${{ secrets.ECR_REGISTRY }}/appointment-service:latest
             docker pull ${{ secrets.ECR_REGISTRY }}/ai-service:latest
-
             docker compose up -d
