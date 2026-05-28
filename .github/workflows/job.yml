@@ -23,6 +23,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      
+      # Setup Maven cache to speed up builds
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       # Build common-security first (dependency for other services)
       - name: Build Common Security
