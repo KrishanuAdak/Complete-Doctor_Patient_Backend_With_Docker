@@ -32,13 +32,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
 
       # Build & Push Images
-      - name: Build API Gateway
-        run: |
-          cd Api_Gateway_Microservices
-          docker build -t api-gateway .
-          docker tag api-gateway:latest ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
-          docker push ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
-
+     
       - name: Build Eureka
         run: |
           cd EurekaServer_Microservice
@@ -73,6 +67,13 @@ jobs:
           docker build -t auth-service .
           docker tag auth-service:latest ${{ secrets.ECR_REGISTRY }}/auth-service:latest
           docker push ${{ secrets.ECR_REGISTRY }}/auth-service:latest
+      - name: Build API Gateway
+        run: |
+          cd Api_Gateway_Microservices
+          docker build -t api-gateway .
+          docker tag api-gateway:latest ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
+          docker push ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
+
 
       # Deploy To EC2
       - name: Deploy EC2
