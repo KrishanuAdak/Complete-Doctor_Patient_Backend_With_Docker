@@ -67,12 +67,12 @@ jobs:
           docker tag appointment-service:latest ${{ secrets.ECR_REGISTRY }}/appointment-service:latest
           docker push ${{ secrets.ECR_REGISTRY }}/appointment-service:latest
 
-      - name: Build AI Service
+      - name: Build Auth Service
         run: |
-          cd ai-service
-          docker build -t ai-service .
-          docker tag ai-service:latest ${{ secrets.ECR_REGISTRY }}/ai-service:latest
-          docker push ${{ secrets.ECR_REGISTRY }}/ai-service:latest
+          cd auth-service
+          docker build -t auth-service .
+          docker tag auth-service:latest ${{ secrets.ECR_REGISTRY }}/auth-service:latest
+          docker push ${{ secrets.ECR_REGISTRY }}/auth-service:latest
 
       # Deploy To EC2
       - name: Deploy EC2
@@ -83,7 +83,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
 
           script: |
-            cd hospital-microservices
+            cd appointment-booking-microservices
 
             aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
 
