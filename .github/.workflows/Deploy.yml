@@ -12,7 +12,6 @@ jobs:
 
 deploy:
 
-```
 runs-on: ubuntu-latest
 
 steps:
@@ -126,4 +125,4 @@ steps:
         docker pull ${{ secrets.ECR_REGISTRY }}/ai-service:latest
 
         docker compose up -d
-```
+

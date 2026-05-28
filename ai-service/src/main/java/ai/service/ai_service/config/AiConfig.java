@@ -4,13 +4,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.model.openai.OpenAiEmbeddingModel;
-import dev.langchain4j.store.embedding.EmbeddingStore;
-import dev.langchain4j.store.embedding.inmemory.InMemoryEmbeddingStore;
 
 @Configuration
 public class AiConfig {
@@ -32,10 +29,10 @@ public class AiConfig {
                 .modelName("text-embedding-3-small")
                 .build();
     }
-    @Bean
-    public EmbeddingStore<TextSegment> embeddingStore() {
-        return new InMemoryEmbeddingStore<>();
-    }
+    // @Bean
+    // public EmbeddingStore<TextSegment> embeddingStore() {
+    //     return new InMemoryEmbeddingStore<>();
+    // }
       //  @Bean
     // public EmbeddingStore<TextSegment> embeddingStore() {
 
@@ -44,6 +41,13 @@ public class AiConfig {
     //             .collectionName("doctor-ai")
     //            // .embeddingModel(embeddingModel())
     //             .build();
+    // }
+
+    // EmbeddingStore<TextSegment> embeddingStore(){
+    //     return ChromaEmbeddingStore.builder().
+    //     baseUrl("http://localhost:1000")
+    //     .collectionName("doctor-ai").embeddingModel(embeddingModel())
+    //     .build();
     // }
 
    
