@@ -34,42 +34,42 @@ jobs:
       # Build & Push Images
       - name: Build API Gateway
         run: |
-          cd api-gateway
+          cd Api_Gateway_Microservices
           docker build -t api-gateway .
           docker tag api-gateway:latest ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
           docker push ${{ secrets.ECR_REGISTRY }}/api-gateway:latest
 
       - name: Build Eureka
         run: |
-          cd eureka-service
+          cd EurekaServer_Microservice
           docker build -t eureka-service .
           docker tag eureka-service:latest ${{ secrets.ECR_REGISTRY }}/eureka-service:latest
           docker push ${{ secrets.ECR_REGISTRY }}/eureka-service:latest
 
       - name: Build Patient
         run: |
-          cd patient-service
+          cd Patients_Microservices
           docker build -t patient-service .
           docker tag patient-service:latest ${{ secrets.ECR_REGISTRY }}/patient-service:latest
           docker push ${{ secrets.ECR_REGISTRY }}/patient-service:latest
 
       - name: Build Doctor
         run: |
-          cd doctor-service
+          cd Doctor_Microservice
           docker build -t doctor-service .
           docker tag doctor-service:latest ${{ secrets.ECR_REGISTRY }}/doctor-service:latest
           docker push ${{ secrets.ECR_REGISTRY }}/doctor-service:latest
 
       - name: Build Appointment
         run: |
-          cd appointment-service
+          cd Appointment_Microservices
           docker build -t appointment-service .
           docker tag appointment-service:latest ${{ secrets.ECR_REGISTRY }}/appointment-service:latest
           docker push ${{ secrets.ECR_REGISTRY }}/appointment-service:latest
 
       - name: Build Auth Service
         run: |
-          cd auth-service
+          cd AuthService
           docker build -t auth-service .
           docker tag auth-service:latest ${{ secrets.ECR_REGISTRY }}/auth-service:latest
           docker push ${{ secrets.ECR_REGISTRY }}/auth-service:latest
