@@ -148,14 +148,14 @@ services:
       SPRING_PROFILES_ACTIVE: docker 
     networks:
       - app-network
-  ai-service:
-    image: ai-service
-    ports:
-      - "7001:7001"
-    depends_on:
-       eureka:
-          condition: service_started
-      # - chromadb:
+  # ai-service:
+  #   image: ai-service
+  #   ports:
+  #     - "7001:7001"
+  #   depends_on:
+  #      eureka:
+  #         condition: service_started
+  #     # - chromadb:
       #     condition: service_started
 
 
