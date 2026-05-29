@@ -108,13 +108,18 @@ jobs:
 
       - name: Deploy EC2
         uses: appleboy/ssh-action@master
+        env:
+          REPO_URL: ${{ secrets.REPO_URL }}
+          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          AWS_REGION: ap-south-1
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user  # ✅ Fixed: was 'ubuntu', Amazon Linux 2023 uses 'ec2-user'
+          username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           timeout: 60s
           command_timeout: 30m
+          envs: REPO_URL,ECR_REGISTRY,AWS_REGION
           script: |
             set -e
             echo "Starting deployment..."
@@ -128,41 +133,41 @@ jobs:
             # Clone repo if it doesn't exist, otherwise pull latest
             if [ ! -d "appointment-booking-microservices" ]; then
               echo "Cloning repository..."
-              git clone ${{ secrets.REPO_URL }} appointment-booking-microservices
+              git clone "$REPO_URL" appointment-booking-microservices
             fi
 
             cd appointment-booking-microservices
             git pull origin main
-            
+
             # Configure AWS CLI and Docker login
             echo "Logging into ECR..."
-            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
-            
+            aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
+
             # Stop running containers
             echo "Stopping containers..."
             docker compose down || true
-            
+
             # Pull latest images
             echo "Pulling Docker images..."
-            docker pull ${{ env.ECR_REGISTRY }}/api-gateway:latest
-            docker pull ${{ env.ECR_REGISTRY }}/eureka-service:latest
-            docker pull ${{ env.ECR_REGISTRY }}/patient-service:latest
-            docker pull ${{ env.ECR_REGISTRY }}/doctor-service:latest
-            docker pull ${{ env.ECR_REGISTRY }}/appointment-service:latest
-            docker pull ${{ env.ECR_REGISTRY }}/auth-service:latest
-            
+            docker pull "$ECR_REGISTRY"/api-gateway:latest
+            docker pull "$ECR_REGISTRY"/eureka-service:latest
+            docker pull "$ECR_REGISTRY"/patient-service:latest
+            docker pull "$ECR_REGISTRY"/doctor-service:latest
+            docker pull "$ECR_REGISTRY"/appointment-service:latest
+            docker pull "$ECR_REGISTRY"/auth-service:latest
+
             # Start containers
             echo "Starting containers..."
             docker compose up -d
-            
+
             echo "Deployment completed successfully!"
-          
+
       - name: Verify Deployment
         uses: appleboy/ssh-action@master
         if: success()
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ec2-user  # ✅ Fixed: was 'ubuntu', Amazon Linux 2023 uses 'ec2-user'
+          username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           timeout: 60s
