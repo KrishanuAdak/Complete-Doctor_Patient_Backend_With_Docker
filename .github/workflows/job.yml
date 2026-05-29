@@ -7,7 +7,7 @@ on:
 
 env:
   AWS_REGION: ap-south-1
-  ECR_REGISTRY: 846210185519.dkr.ecr.ap-south-1.amazonaws.com/appointment-booking
+  ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
 
 jobs:
   deploy:
