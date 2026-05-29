@@ -14,18 +14,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout Code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Setup Java
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
-      
-      # Setup Maven cache to speed up builds
+
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
@@ -34,11 +31,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Build common-security first (dependency for other services)
       - name: Build Common Security
         run: cd common-security && mvn clean install -DskipTests
 
-      # Build all microservices
       - name: Build Eureka Server
         run: cd EurekaServer_Microservice && mvn clean package -DskipTests
 
@@ -57,7 +52,6 @@ jobs:
       - name: Build API Gateway
         run: cd Api_Gateway_Microservices && mvn clean package -DskipTests
 
-      # Configure AWS
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -65,55 +59,37 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      # Login To ECR
       - name: Login ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Build & Push Docker Images
       - name: Build Eureka
         run: |
           cd EurekaServer_Microservice
           docker build -t eureka-service .
           docker tag eureka-service:latest ${{ env.ECR_REGISTRY }}/eureka-service:latest
-<<<<<<< HEAD
           docker push ${{ env.ECR_REGISTRY }}/eureka-service:latest
-=======
-          docker push ${{ env.ECR_REGISTRY }}
->>>>>>> 51401e4 (CI/CD changes)
 
       - name: Build Patient
         run: |
           cd Patients_Microservices
           docker build -t patient-service .
           docker tag patient-service:latest ${{ env.ECR_REGISTRY }}/patient-service:latest
-<<<<<<< HEAD
           docker push ${{ env.ECR_REGISTRY }}/patient-service:latest
-=======
-          docker push ${{ env.ECR_REGISTRY }}
->>>>>>> 51401e4 (CI/CD changes)
 
       - name: Build Doctor
         run: |
           cd Doctor_Microservice
           docker build -t doctor-service .
           docker tag doctor-service:latest ${{ env.ECR_REGISTRY }}/doctor-service:latest
-<<<<<<< HEAD
           docker push ${{ env.ECR_REGISTRY }}/doctor-service:latest
-=======
-          docker push ${{ env.ECR_REGISTRY }}
->>>>>>> 51401e4 (CI/CD changes)
 
       - name: Build Appointment
         run: |
           cd Appointment_Microservices
           docker build -t appointment-service .
           docker tag appointment-service:latest ${{ env.ECR_REGISTRY }}/appointment-service:latest
-<<<<<<< HEAD
           docker push ${{ env.ECR_REGISTRY }}/appointment-service:latest
-=======
-          docker push ${{ env.ECR_REGISTRY }}
->>>>>>> 51401e4 (CI/CD changes)
 
       - name: Build Auth Service
         run: |
@@ -129,7 +105,6 @@ jobs:
           docker tag api-gateway:latest ${{ env.ECR_REGISTRY }}/api-gateway:latest
           docker push ${{ env.ECR_REGISTRY }}/api-gateway:latest
 
-      # Deploy To EC2
       - name: Deploy EC2
         uses: appleboy/ssh-action@master
         with:
@@ -146,8 +121,4 @@ jobs:
             docker pull ${{ env.ECR_REGISTRY }}/doctor-service:latest
             docker pull ${{ env.ECR_REGISTRY }}/appointment-service:latest
             docker pull ${{ env.ECR_REGISTRY }}/ai-service:latest
-<<<<<<< HEAD
             docker compose up -d
-=======
-            docker compose up -d
->>>>>>> 51401e4 (CI/CD changes)
