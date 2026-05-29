@@ -118,7 +118,15 @@ jobs:
           script: |
             set -e
             echo "Starting deployment..."
+
+            # Clone repo if it doesn't exist, otherwise pull latest
+            if [ ! -d "appointment-booking-microservices" ]; then
+              echo "Cloning repository..."
+              git clone ${{ secrets.REPO_URL }} appointment-booking-microservices
+            fi
+
             cd appointment-booking-microservices
+            git pull origin main
             
             # Configure AWS CLI and Docker login
             echo "Logging into ECR..."
