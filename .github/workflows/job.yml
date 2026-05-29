@@ -73,7 +73,7 @@ jobs:
 
       - name: Build Patient
         run: |
-          cd Patients_Microservicess
+          cd Patients_Microservices
           docker build -t patient-service .
           docker tag patient-service:latest ${{ env.ECR_REGISTRY }}/patient-service:latest
           docker push ${{ env.ECR_REGISTRY }}/patient-service:latest
