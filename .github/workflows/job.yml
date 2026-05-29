@@ -73,7 +73,7 @@ jobs:
 
       - name: Build Patient
         run: |
-          cd Patients_Microservices
+          cd Patients_Microservicess
           docker build -t patient-service .
           docker tag patient-service:latest ${{ env.ECR_REGISTRY }}/patient-service:latest
           docker push ${{ env.ECR_REGISTRY }}/patient-service:latest
@@ -83,7 +83,7 @@ jobs:
           cd Doctor_Microservice
           docker build -t doctor-service .
           docker tag doctor-service:latest ${{ env.ECR_REGISTRY }}/doctor-service:latest
-          docker push ${{ env.ECR_REGISTRY }}/docker-service:latest
+          docker push ${{ env.ECR_REGISTRY }}/doctor-service:latest
 
       - name: Build Appointment
         run: |
