@@ -22,6 +22,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          cache: maven
 
       - name: Cache Maven packages
         uses: actions/cache@v3
@@ -82,7 +83,7 @@ jobs:
           cd Doctor_Microservice
           docker build -t doctor-service .
           docker tag doctor-service:latest ${{ env.ECR_REGISTRY }}/doctor-service:latest
-          docker push ${{ env.ECR_REGISTRY }}/doctor-service:latest
+          docker push ${{ env.ECR_REGISTRY }}/docker-service:latest
 
       - name: Build Appointment
         run: |
@@ -111,14 +112,46 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 60s
+          command_timeout: 30m
           script: |
+            set -e
+            echo "Starting deployment..."
             cd appointment-booking-microservices
-            aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
-            docker compose down
+            
+            # Configure AWS CLI and Docker login
+            echo "Logging into ECR..."
+            aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ env.ECR_REGISTRY }}
+            
+            # Stop running containers
+            echo "Stopping containers..."
+            docker compose down || true
+            
+            # Pull latest images
+            echo "Pulling Docker images..."
             docker pull ${{ env.ECR_REGISTRY }}/api-gateway:latest
             docker pull ${{ env.ECR_REGISTRY }}/eureka-service:latest
             docker pull ${{ env.ECR_REGISTRY }}/patient-service:latest
             docker pull ${{ env.ECR_REGISTRY }}/doctor-service:latest
             docker pull ${{ env.ECR_REGISTRY }}/appointment-service:latest
-            docker pull ${{ env.ECR_REGISTRY }}/ai-service:latest
+            docker pull ${{ env.ECR_REGISTRY }}/auth-service:latest
+            
+            # Start containers
+            echo "Starting containers..."
             docker compose up -d
+            
+            echo "Deployment completed successfully!"
+          
+      - name: Verify Deployment
+        uses: appleboy/ssh-action@master
+        if: success()
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          timeout: 60s
+          script: |
+            echo "Checking running containers..."
+            docker ps --format "table {{.Names}}\t{{.Status}}"
