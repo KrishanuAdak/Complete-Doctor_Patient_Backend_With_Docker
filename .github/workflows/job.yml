@@ -14,165 +14,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Source
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
         with:
+          distribution: temurin
           java-version: '17'
-          distribution: 'temurin'
           cache: maven
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Build Common Security
-        run: cd common-security && mvn clean install -DskipTests
-
-      - name: Build Eureka Server
-        run: cd EurekaServer_Microservice && mvn clean package -DskipTests
-
-      - name: Build Patient Service
-        run: cd Patients_Microservices && mvn clean package -DskipTests
-
-      - name: Build Doctor Service
-        run: cd Doctor_Microservice && mvn clean package -DskipTests
-
-      - name: Build Appointment Service
-        run: cd Appointment_Microservices && mvn clean package -DskipTests
-
-      - name: Build Auth Service
-        run: cd AuthService && mvn clean package -DskipTests
-
-      - name: Build API Gateway
-        run: cd Api_Gateway_Microservices && mvn clean package -DskipTests
-
-      - name: Configure AWS
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Build Eureka
-        run: |
-          cd EurekaServer_Microservice
-          docker build -t eureka-service .
-          docker tag eureka-service:latest ${{ env.ECR_REGISTRY }}/eureka-service:latest
-          docker push ${{ env.ECR_REGISTRY }}/eureka-service:latest
-
-      - name: Build Patient
-        run: |
-          cd Patients_Microservices
-          docker build -t patient-service .
-          docker tag patient-service:latest ${{ env.ECR_REGISTRY }}/patient-service:latest
-          docker push ${{ env.ECR_REGISTRY }}/patient-service:latest
-
-      - name: Build Doctor
-        run: |
-          cd Doctor_Microservice
-          docker build -t doctor-service .
-          docker tag doctor-service:latest ${{ env.ECR_REGISTRY }}/doctor-service:latest
-          docker push ${{ env.ECR_REGISTRY }}/doctor-service:latest
-
-      - name: Build Appointment
-        run: |
-          cd Appointment_Microservices
-          docker build -t appointment-service .
-          docker tag appointment-service:latest ${{ env.ECR_REGISTRY }}/appointment-service:latest
-          docker push ${{ env.ECR_REGISTRY }}/appointment-service:latest
-
-      - name: Build Auth Service
-        run: |
-          cd AuthService
-          docker build -t auth-service .
-          docker tag auth-service:latest ${{ env.ECR_REGISTRY }}/auth-service:latest
-          docker push ${{ env.ECR_REGISTRY }}/auth-service:latest
-
-      - name: Build API Gateway
-        run: |
-          cd Api_Gateway_Microservices
-          docker build -t api-gateway .
-          docker tag api-gateway:latest ${{ env.ECR_REGISTRY }}/api-gateway:latest
-          docker push ${{ env.ECR_REGISTRY }}/api-gateway:latest
-
-      - name: Deploy EC2
-        uses: appleboy/ssh-action@master
-        env:
-          REPO_URL: ${{ secrets.REPO_URL }}
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
-          AWS_REGION: ap-south-1
-          DOCKER_DB_NAME: ${{ secrets.DOCKER_DB_NAME }}
-          DOCKER_DB_USERNAME: ${{ secrets.DOCKER_DB_USERNAME }}
-          DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          port: 22
-          timeout: 60s
-          command_timeout: 30m
-          envs: REPO_URL,ECR_REGISTRY,AWS_REGION,DOCKER_DB_NAME,DOCKER_DB_USERNAME,DOCKER_DB_PASSWORD
-          script: |
-            set -e
-            echo "Starting deployment..."
-
-            if ! command -v git &> /dev/null; then
-              echo "Installing git..."
-              sudo dnf install -y git
-            fi
-
-            if [ ! -d "appointment-booking-microservices" ]; then
-              echo "Cloning repository..."
-              git clone "$REPO_URL" appointment-booking-microservices
-            fi
-
-            cd appointment-booking-microservices
-            git fetch origin
-            git reset --hard origin/main
-
-            echo "Creating .env file..."
-            printf "ECR_URL=%s\nDOCKER_DB_NAME=%s\nDOCKER_DB_USERNAME=%s\nDOCKER_DB_PASSWORD=%s\n" \
-              "${ECR_REGISTRY}" "${DOCKER_DB_NAME}" "${DOCKER_DB_USERNAME}" "${DOCKER_DB_PASSWORD}" > .env
-
-            echo "Logging into ECR..."
-            aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
-
-            echo "Stopping containers..."
-            docker compose down || true
-
-            echo "Pulling Docker images..."
-            docker pull "$ECR_REGISTRY"/api-gateway:latest
-            docker pull "$ECR_REGISTRY"/eureka-service:latest
-            docker pull "$ECR_REGISTRY"/patient-service:latest
-            docker pull "$ECR_REGISTRY"/doctor-service:latest
-            docker pull "$ECR_REGISTRY"/appointment-service:latest
-            docker pull "$ECR_REGISTRY"/auth-service:latest
-
-            echo "Starting containers..."
-            docker compose up -d
-
-            echo "Deployment completed successfully!"
+      # all your other steps here ...
 
       - name: Verify Deployment
-        uses: appleboy/ssh-action@master
         if: success()
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
-          timeout: 60s
+
           script: |
-            echo "Checking running containers..."
-            docker ps --format "table {{.Names}}\t{{.Status}}"
+            docker ps
+            docker compose ps
