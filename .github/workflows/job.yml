@@ -112,6 +112,9 @@ jobs:
           REPO_URL: ${{ secrets.REPO_URL }}
           ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
           AWS_REGION: ap-south-1
+          DOCKER_DB_NAME: ${{ secrets.DOCKER_DB_NAME }}
+          DOCKER_DB_USERNAME: ${{ secrets.DOCKER_DB_USERNAME }}
+          DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ec2-user
@@ -119,7 +122,7 @@ jobs:
           port: 22
           timeout: 60s
           command_timeout: 30m
-          envs: REPO_URL,ECR_REGISTRY,AWS_REGION
+          envs: REPO_URL,ECR_REGISTRY,AWS_REGION,DOCKER_DB_NAME,DOCKER_DB_USERNAME,DOCKER_DB_PASSWORD
           script: |
             set -e
             echo "Starting deployment..."
@@ -137,6 +140,10 @@ jobs:
             cd appointment-booking-microservices
             git fetch origin
             git reset --hard origin/main
+
+            echo "Creating .env file..."
+            printf "ECR_URL=%s\nDOCKER_DB_NAME=%s\nDOCKER_DB_USERNAME=%s\nDOCKER_DB_PASSWORD=%s\n" \
+              "${ECR_REGISTRY}" "${DOCKER_DB_NAME}" "${DOCKER_DB_USERNAME}" "${DOCKER_DB_PASSWORD}" > .env
 
             echo "Logging into ECR..."
             aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
