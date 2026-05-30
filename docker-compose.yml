@@ -71,14 +71,14 @@ services:
       - app-network
 
   eureka:
-    image: eureka-server
+    image: ${ECR_URL}/eureka-server:latest
     ports:
       - "8761:8761"
     networks:
       - app-network
 
   doctor-service:
-    image: doctor-service
+    image: ${ECR_URL}/doctor-service:latest
     ports:
       - "8085:8085"
     depends_on:
@@ -96,7 +96,7 @@ services:
       - app-network
 
   api-gateway:
-    image: api-gateway
+    image: ${ECR_URL}/api-gateway:latest
     ports:
       - "9000:9000"
     depends_on:
@@ -109,7 +109,7 @@ services:
       - app-network
 
   appointment-service:
-    image: appointment-service
+    image: ${ECR_URL}/appointment-service:latest
     ports:
       - "5959:5959"
     depends_on:
@@ -129,7 +129,7 @@ services:
     networks:
       - app-network
   auth-service:
-    image: auth-service
+    image: ${ECR_URL}/auth-service:latest
     ports:
       - "7979:7979"
     depends_on:
