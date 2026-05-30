@@ -124,30 +124,26 @@ jobs:
             set -e
             echo "Starting deployment..."
 
-            # Install git if not present
             if ! command -v git &> /dev/null; then
               echo "Installing git..."
               sudo dnf install -y git
             fi
 
-            # Clone repo if it doesn't exist, otherwise pull latest
             if [ ! -d "appointment-booking-microservices" ]; then
               echo "Cloning repository..."
               git clone "$REPO_URL" appointment-booking-microservices
             fi
 
             cd appointment-booking-microservices
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
 
-            # Configure AWS CLI and Docker login
             echo "Logging into ECR..."
             aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
-            # Stop running containers
             echo "Stopping containers..."
             docker compose down || true
 
-            # Pull latest images
             echo "Pulling Docker images..."
             docker pull "$ECR_REGISTRY"/api-gateway:latest
             docker pull "$ECR_REGISTRY"/eureka-service:latest
@@ -156,7 +152,6 @@ jobs:
             docker pull "$ECR_REGISTRY"/appointment-service:latest
             docker pull "$ECR_REGISTRY"/auth-service:latest
 
-            # Start containers
             echo "Starting containers..."
             docker compose up -d
 
