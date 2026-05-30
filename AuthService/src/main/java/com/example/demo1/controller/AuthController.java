@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,16 +22,16 @@ public class AuthController {
 	@Autowired
 	private AuthService service;
 
-	@Value("${server.port}")
-	private String port;
+	// @Value("${server.port}")
+	// private String port;
 
 	
 
-	@GetMapping("/port")
-	public String getPort() {
-		System.out.println("Port -- " + port);
-		return "Port running on " + port;
-	}
+	// @GetMapping("/port")
+	// public String getPort() {
+	// 	System.out.println("Port -- " + port);
+	// 	return "Port running on " + port;
+	// }
 
 	@PostMapping("/register")
 	public ResponseEntity<?> saveDetails(@RequestBody AuthDB auth) {
