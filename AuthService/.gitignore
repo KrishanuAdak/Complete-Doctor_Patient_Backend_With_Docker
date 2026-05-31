@@ -32,5 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 src/main/resources/application-aws.properties
-src/main/resources/application-dev.properties
 
