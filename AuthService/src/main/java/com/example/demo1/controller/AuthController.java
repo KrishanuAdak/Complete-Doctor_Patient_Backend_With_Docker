@@ -22,16 +22,7 @@ public class AuthController {
 	@Autowired
 	private AuthService service;
 
-	// @Value("${server.port}")
-	// private String port;
-
 	
-
-	// @GetMapping("/port")
-	// public String getPort() {
-	// 	System.out.println("Port -- " + port);
-	// 	return "Port running on " + port;
-	// }
 
 	@PostMapping("/register")
 	public ResponseEntity<?> saveDetails(@RequestBody AuthDB auth) {
