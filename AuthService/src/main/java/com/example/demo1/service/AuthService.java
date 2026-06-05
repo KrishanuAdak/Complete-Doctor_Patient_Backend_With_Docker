@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +19,9 @@ import com.example.demo1.util.JwtUtil;
 @Service
 public class AuthService {
 	private static final Logger logger=LoggerFactory.getLogger(AuthService.class);
+	public AuthService() {
+		// TODO Auto-generated constructor stub
+	}
 
 	@Autowired
 	private AuthRepo repo;
@@ -34,8 +36,6 @@ public class AuthService {
 	@Autowired 
 	private AuthenticationManager authManager;
     
-	@Autowired
-	private KafkaTemplate<String, Object> kafkaTemplate;
 	
 	
 	public AuthDB  saveAuthDetails(AuthDB auth) {
@@ -50,7 +50,6 @@ public class AuthService {
 
     try {
         AuthDB savedAuth = repo.save(data);
-		this.kafkaTemplate.send("new-user-registered", savedAuth);
         return savedAuth;
 
     } catch (DataIntegrityViolationException e) {
