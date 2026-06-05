@@ -22,6 +22,11 @@ public class AuthController {
 	@Autowired
 	private AuthService service;
 
+    @GetMapping("/test")
+	public String test() {
+		return "Auth Service is up and running!!";
+	}
+
 	
 
 	@PostMapping("/register")
