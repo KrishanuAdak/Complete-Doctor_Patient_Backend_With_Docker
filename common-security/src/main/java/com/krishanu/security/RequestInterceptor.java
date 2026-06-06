@@ -1,8 +1,5 @@
 package com.krishanu.security;
 
-import java.util.List;
-
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -54,22 +51,22 @@ public class RequestInterceptor implements HandlerInterceptor {
         RequestContext.clear();
     }
 
-   @Bean
-public org.springframework.web.filter.CorsFilter corsFilter() {
+//    @Bean
+// public org.springframework.web.filter.CorsFilter corsFilter() {
 
-    org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
+//     org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
 
-    config.setAllowCredentials(true);
-    config.setAllowedOrigins(List.of("http://localhost:4200"));
-    config.addAllowedHeader("*");
-    config.addAllowedMethod("*");
+//     config.setAllowCredentials(true);
+//     config.setAllowedOrigins(List.of("http://localhost:4200"));
+//     config.addAllowedHeader("*");
+//     config.addAllowedMethod("*");
 
-    org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
-            new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+//     org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
+//             new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
 
-    source.registerCorsConfiguration("/**", config);
+//     source.registerCorsConfiguration("/**", config);
 
-    return new org.springframework.web.filter.CorsFilter(source);
-}
+//     return new org.springframework.web.filter.CorsFilter(source);
+// }
 
 }
