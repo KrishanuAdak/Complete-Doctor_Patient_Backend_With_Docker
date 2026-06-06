@@ -1,7 +1,5 @@
 package com.example.demo1.configuration;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
@@ -29,7 +27,8 @@ public class GatewayConfig {
        public CorsWebFilter corsFilter() {
                 org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
                 config.setAllowCredentials(true);
-                config.setAllowedOrigins(List.of("http://localhost:4200"));
+                config.addAllowedOrigin("https://appointment-easy-bengal.in");
+                config.addAllowedOrigin("https://www.appointment-easy-bengal.in");
                 config.addAllowedHeader("*");
                 config.addAllowedMethod("*");
                 org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource();
