@@ -107,6 +107,9 @@ public ResponseEntity<Boolean> validate(HttpServletRequest request) {
 		cookie.setHttpOnly(true);
 		cookie.setPath("/");
 		cookie.setMaxAge(0); 
+		cookie.setSecure(true); // Important!
+		cookie.setDomain("api.appintment-easy-bengal.in");
+
 		response.addCookie(cookie);
 		return ResponseEntity.ok(Map.of("message", "Logged out"));
 	}
