@@ -29,6 +29,7 @@ public class GatewayConfig {
                 config.setAllowCredentials(true);
                 config.addAllowedOrigin("https://appointment-easy-bengal.in");
                 config.addAllowedOrigin("https://www.appointment-easy-bengal.in");
+                config.addAllowedOrigin("http://localhost:4200"); 
                 config.addAllowedHeader("*");
                 config.addAllowedMethod("*");
                 org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource();

@@ -47,6 +47,7 @@ public class AuthService {
     data.setEmail(auth.getEmail());
     data.setPassword(encoder.encode(auth.getPassword()));
     data.setRole(auth.getRole());
+	data.setUsername(auth.getUsername());
 
     try {
         AuthDB savedAuth = repo.save(data);
