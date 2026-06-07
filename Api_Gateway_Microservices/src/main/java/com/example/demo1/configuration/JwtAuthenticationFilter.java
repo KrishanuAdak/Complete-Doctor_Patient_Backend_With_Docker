@@ -42,6 +42,11 @@ public class JwtAuthenticationFilter implements GatewayFilter {
                 token = authHeader.substring(7);
             }
         }
+        String path = exchange.getRequest().getURI().getPath();
+        if (path.startsWith("/appointment/v1/appointments/count") || path.contains("/verified-doctor/counts")) {
+            System.out.println("Skipping authentication for path: " + path);
+            return chain.filter(exchange);
+        }
 
         // ✅ Step 3: Reject if no token found
         if (token == null) {

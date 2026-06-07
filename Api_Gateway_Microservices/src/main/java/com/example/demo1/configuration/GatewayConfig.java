@@ -17,7 +17,6 @@ public class GatewayConfig {
         @Autowired
         private User_Role_Based_Key_Resolver keyResolver;
 
-        // Centralized RedisRateLimiter beans
 
         @Bean
         public RedisRateLimiter redisRateLimiter() {
