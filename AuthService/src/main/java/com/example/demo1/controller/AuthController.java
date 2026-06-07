@@ -59,7 +59,7 @@ public class AuthController {
 			cookie.setSecure(true);
 			cookie.setMaxAge(24 * 60 * 60);
 			cookie.setPath("/");
-			cookie.setDomain("api.appointment-easy-bengal.in");
+			cookie.setDomain("appointment-easy-bengal.in"); // ← no subdomain, covers all subdomains
 			response.addCookie(cookie); // attach to response
 			Map<String, Object> res = new HashMap<>();
 			res.put("token", "Token Login Success!!");
@@ -70,32 +70,35 @@ public class AuthController {
 		}
 
 	}
+
 	@GetMapping("/validate")
-public ResponseEntity<Boolean> validate(HttpServletRequest request) {
-    try {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+	public ResponseEntity<Boolean> validate(HttpServletRequest request) {
+		try {
+			Cookie[] cookies = request.getCookies();
+			if (cookies == null)
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
 
-        String token = null;
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("jwt")) {
-                token = cookie.getValue();
-                break;
-            }
-        }
+			String token = null;
+			for (Cookie cookie : cookies) {
+				if (cookie.getName().equals("jwt")) {
+					token = cookie.getValue();
+					break;
+				}
+			}
 
-        if (token == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+			if (token == null)
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
 
-        if (jwtUtil.isTokenValidated(token)) {
-            return ResponseEntity.ok(true);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-        }
+			if (jwtUtil.isTokenValidated(token)) {
+				return ResponseEntity.ok(true);
+			} else {
+				return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+			}
 
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-    }
-}
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+		}
+	}
 
 	@GetMapping("/patient/{id}")
 	public String getEmailById(@PathVariable("id") int patient_id) {
@@ -107,10 +110,9 @@ public ResponseEntity<Boolean> validate(HttpServletRequest request) {
 		Cookie cookie = new Cookie("jwt", "");
 		cookie.setHttpOnly(true);
 		cookie.setPath("/");
-		cookie.setMaxAge(0); 
+		cookie.setMaxAge(0);
 		cookie.setSecure(true); // Important!
-		cookie.setDomain("api.appointment-easy-bengal.in");
-
+		cookie.setDomain("appointment-easy-bengal.in"); // ← no subdomain, covers all subdomains
 		response.addCookie(cookie);
 		return ResponseEntity.ok(Map.of("message", "Logged out"));
 	}
