@@ -50,16 +50,16 @@ public class AuthController {
 	public ResponseEntity<?> login(@RequestBody AuthDB auth, HttpServletResponse response) {
 		try {
 			String token = this.service.login(auth);
-			Map<String, Object> res = new HashMap<>();
-			res.put("Token", token);
-			res.put("Status", HttpStatus.OK.value());
 			Cookie cookie = new Cookie("jwt", token);
 			cookie.setHttpOnly(true);
 			cookie.setSecure(false);
 			cookie.setMaxAge(24 * 60 * 60);
 			cookie.setPath("/");
 			response.addCookie(cookie); // attach to response
-			return ResponseEntity.status(HttpStatus.OK).body("Login Successful!!");
+			Map<String, Object> res = new HashMap<>();
+			res.put("token", token);
+			res.put("status", HttpStatus.OK.value());
+			return ResponseEntity.status(HttpStatus.OK).body(res);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Token Login  failed!!");
 		}
