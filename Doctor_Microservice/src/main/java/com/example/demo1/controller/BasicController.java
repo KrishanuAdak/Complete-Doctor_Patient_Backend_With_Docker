@@ -90,11 +90,9 @@ public class BasicController {
 					ObjectMapper mapper=new ObjectMapper();
 					Doctor doctor=mapper.readValue(docx, Doctor.class);
 					doctor.setDoctor_name(doctor.getDoctor_name());
-					doctor.setDoctor_id(Integer.parseInt(user_id));
+					doctor.setAuth_user_id(Integer.parseInt(user_id));
 					doctor.setRegistrationNumber(doctor.getRegistrationNumber());
 				    doctor.setPhone_number(doctor.getPhone_number());
-					doctor.setLock_version(false);
-					doctor.setRegistrationFile(file.getBytes());
 					doctor.setCreation_date(LocalDateTime.now());	
 					doctor.setFileName(file.getName());
 					Doctor d=doctor;

@@ -14,6 +14,13 @@ public class AppointmentTool {
         System.out.println("AppointmentTools called with location: " + location);
         return 6;
     }
+    @Tool(name="booking_appointment_with_doctor" 
+    ,value="this tool will be invoked when user asks book appointment with any doctor otherwise do not invoke it. but ask for yes or no when user asks for book appointment with any doctor if yes then only invoke it.")
+
+    public String bookAppointmentWithDoctor(@P ("doctorname") String doctor_name){
+      return "Your appointment booked successfully with"+ doctor_name;
+
+    }
     
 }
    
