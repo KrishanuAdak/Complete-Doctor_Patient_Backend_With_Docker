@@ -3,6 +3,7 @@ package com.example.demo1.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
+import org.springframework.http.HttpCookie;           // ✅ new import
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -16,21 +17,46 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class JwtAuthenticationFilter implements GatewayFilter {
+
     @Value("${jwt.secret}")
-    private  String secret;
+    private String secret;
+
     @Value("${X-Secret-Key}")
     private String secretKey;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String token = null;
+
+        // ✅ Step 1: Read from HttpOnly Cookie
+        HttpCookie jwtCookie = exchange.getRequest().getCookies().getFirst("jwt");
+        if (jwtCookie != null) {
+            token = jwtCookie.getValue();
+        }
+
+        // ✅ Step 2: Fallback to Authorization header (Postman/testing)
+        if (token == null) {
+            String authHeader = exchange.getRequest().getHeaders()
+                                        .getFirst(HttpHeaders.AUTHORIZATION);
+            if (authHeader != null && authHeader.startsWith("Bearer ")) {
+                token = authHeader.substring(7);
+            }
+        }
+        String path = exchange.getRequest().getURI().getPath();
+        System.out.println("Path -"+path);
+        if (path.startsWith("/appointment/v1/appointments/count") || path.contains("/verified-doctor/counts") || path.startsWith("/ai/chat")) {
+            System.out.println("Skipping authentication for path: " + path);
+            return chain.filter(exchange);
+        }
+
+        // ✅ Step 3: Reject if no token found
+        if (token == null) {
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
 
-        String token = authHeader.substring(7);
+        // ✅ Your existing validation logic — unchanged
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
@@ -39,11 +65,10 @@ public class JwtAuthenticationFilter implements GatewayFilter {
                     .getBody();
 
             String role = claims.get("role", String.class);
-            int   user_Id=claims.get("ID",Integer.class);
-            String user_id_parsed=String.valueOf(user_Id);
+            int user_Id = claims.get("ID", Integer.class);
+            String user_id_parsed = String.valueOf(user_Id);
             String subject = claims.getSubject();
 
-            // Add userId and role as headers to forward to downstream services
             ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
                     .header("X-User-name", subject)
                     .header("X-User-Role", role)
@@ -58,7 +83,4 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             return exchange.getResponse().setComplete();
         }
     }
-
-
 }
-

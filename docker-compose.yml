@@ -16,71 +16,17 @@ services:
       retries: 5
       start_period: 30s
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.6.0
-    container_name: zookeeper
-    environment:
-      - ZOOKEEPER_CLIENT_PORT=2181
-      - ZOOKEEPER_TICK_TIME=2000
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2181"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 20s
-    networks:
-      - app-network
-
-  kafka:
-    image: confluentinc/cp-kafka:7.6.0
-    container_name: kafka
-    ports:
-      - "9091:9091"
-    depends_on:
-      zookeeper:
-        condition: service_healthy
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9091
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9091
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    healthcheck:
-      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9091"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    networks:
-      - app-network
-
+  
   eureka:
-    image: eureka-server
+    image: ${ECR_URL}/eureka-service:latest
     ports:
       - "8761:8761"
     networks:
       - app-network
 
-  doctor-service:
-    image: doctor-service
-    ports:
-      - "8085:8085"
-    depends_on:
-      mysql:
-        condition: service_healthy
-      eureka:
-        condition: service_started
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DOCKER_DB_NAME}
-      SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
-      SPRING_PROFILES_ACTIVE: docker
-    networks:
-      - app-network
-
+  
   api-gateway:
-    image: api-gateway
+    image: ${ECR_URL}/api-gateway:latest
     ports:
       - "9000:9000"
     depends_on:
@@ -93,7 +39,7 @@ services:
       - app-network
 
   appointment-service:
-    image: appointment-service
+    image: ${ECR_URL}/appointment-service:latest
     ports:
       - "5959:5959"
     depends_on:
@@ -101,19 +47,17 @@ services:
         condition: service_started
       mysql:
         condition: service_healthy
-      kafka:
-        condition: service_healthy
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DOCKER_DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9091
     networks:
       - app-network
+
   auth-service:
-    image: auth-service
+    image: ${ECR_URL}/auth-service:latest
     ports:
       - "7979:7979"
     depends_on:
@@ -121,18 +65,25 @@ services:
         condition: service_started
       mysql:
         condition: service_healthy
-      kafka:
-        condition: service_healthy
     environment:
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka
-      SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DOCKER_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9091
-      SPRING_PROFILES_ACTIVE: docker 
+      SPRING_PROFILES_ACTIVE: docker
     networks:
       - app-network
-
+  ai-service:
+    image: ai-service
+    ports:
+      - "7001:7001"
+    depends_on:
+      - eureka:
+          condition: service_started
+    entrypoint: 
+       SPRING_PROFILES_ACTIVE: docker
+    networks:
+      - app-network
 
 networks:
   app-network:
