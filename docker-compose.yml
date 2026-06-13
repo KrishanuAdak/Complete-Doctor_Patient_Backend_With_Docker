@@ -83,6 +83,7 @@ services:
       SPRING_PROFILES_ACTIVE: docker
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
       SPRING_AI_OPENAI_API_KEY: ${OPENAI_API_KEY}
+      SPRING_APPLICATION_NAME: ai-service
     networks:
       - app-network
 
