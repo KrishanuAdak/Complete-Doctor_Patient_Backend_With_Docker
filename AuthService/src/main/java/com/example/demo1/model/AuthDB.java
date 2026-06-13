@@ -10,13 +10,14 @@ import jakarta.validation.constraints.Size;
 public class AuthDB {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private int id;
+	private long id;
 	@Email(message="Please enter valid email")
 	@Column(nullable=false,unique=true)
 	private String email;
 	@Size(min=8)
 	private String password;
 	private String role;
+<<<<<<< HEAD
 	private String username;
 	public String getUsername() {
 		return username;
@@ -25,9 +26,12 @@ public class AuthDB {
 		this.username = username;
 	}
 	public int getId() {
+=======
+	public long getId() {
+>>>>>>> test
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public String getEmail() {
@@ -48,8 +52,13 @@ public class AuthDB {
 	public void setRole(String role) {
 		this.role = role;
 	}
+<<<<<<< HEAD
 
 	public AuthDB(int id, String email, String password, String role, String username) {
+=======
+	
+	public AuthDB(long id, String email, String password, String role) {
+>>>>>>> test
 		super();
 		this.id = id;
 		this.email = email;

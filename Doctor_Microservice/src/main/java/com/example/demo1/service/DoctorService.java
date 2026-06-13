@@ -31,15 +31,17 @@ public class DoctorService {
 		Doctor doctor = new Doctor();
 		if (d != null) {
 
-			doctor.setDoctor_id(d.getDoctor_id());
+			doctor.setAuth_user_id(d.getAuth_user_id());
 			doctor.setCreation_date(LocalDateTime.now());
 			doctor.setDoctor_name(d.getDoctor_name());
 			doctor.setPhone_number(doctor.getPhone_number());
 			doctor.setFileName(d.getFileName());
-			doctor.setRegistrationFile(d.getRegistrationFile());
-			doctor.setLock_version(false);
+			doctor.setRegistrationFile_Url(d.getRegistrationFile_Url());
 			doctor.setRegistrationNumber(d.getRegistrationNumber());
 			doctor.setRegistrationVerified(false);
+			doctor.setCity(d.getCity());
+			doctor.setExperience(d.getExperience());
+			doctor.setPincode(d.getPincode());
 			Doctor dd = this.repo.save(doctor);
 			return dd;
 
@@ -96,12 +98,12 @@ public class DoctorService {
 
 	}
 
-	public List<Doctor> getBySearch(String name, String email) {
-		List<Doctor> doctor = this.repo.searchByDoctor(name, email);
-		if (doctor == null) {
-			return null;
-		}
-		return doctor;
-	}
+	// public List<Doctor> getBySearch(String name, String email) {
+	// 	List<Doctor> doctor = this.repo.searchByDoctor(name, email);
+	// 	if (doctor == null) {
+	// 		return null;
+	// 	}
+	// 	return doctor;
+	// }
 
 }

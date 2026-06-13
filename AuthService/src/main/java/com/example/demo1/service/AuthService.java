@@ -36,6 +36,11 @@ public class AuthService {
 	@Autowired 
 	private AuthenticationManager authManager;
     
+<<<<<<< HEAD
+=======
+	// @Autowired
+	// private KafkaTemplate<String, Object> kafkaTemplate;
+>>>>>>> test
 	
 	
 	public AuthDB  saveAuthDetails(AuthDB auth) {
@@ -51,6 +56,10 @@ public class AuthService {
 
     try {
         AuthDB savedAuth = repo.save(data);
+<<<<<<< HEAD
+=======
+		//this.kafkaTemplate.send("new-user-registered", savedAuth);
+>>>>>>> test
         return savedAuth;
 
     } catch (DataIntegrityViolationException e) {

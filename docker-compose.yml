@@ -71,6 +71,20 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}
       SPRING_PROFILES_ACTIVE: docker
+<<<<<<< HEAD
+=======
+    networks:
+      - app-network
+  ai-service:
+    image: ai-service
+    ports:
+      - "7001:7001"
+    depends_on:
+      - eureka:
+          condition: service_started
+    entrypoint: 
+       SPRING_PROFILES_ACTIVE: docker
+>>>>>>> test
     networks:
       - app-network
 
