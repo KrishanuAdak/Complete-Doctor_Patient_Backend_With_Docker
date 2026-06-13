@@ -16,7 +16,6 @@ services:
       retries: 5
       start_period: 30s
 
-  
   eureka:
     image: ${ECR_URL}/eureka-service:latest
     ports:
@@ -24,7 +23,6 @@ services:
     networks:
       - app-network
 
-  
   api-gateway:
     image: ${ECR_URL}/api-gateway:latest
     ports:
@@ -71,20 +69,20 @@ services:
       SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}
       SPRING_PROFILES_ACTIVE: docker
-<<<<<<< HEAD
-=======
     networks:
       - app-network
+
   ai-service:
-    image: ai-service
+    image: ${ECR_URL}/ai-service:latest
     ports:
       - "7001:7001"
     depends_on:
-      - eureka:
-          condition: service_started
-    entrypoint: 
-       SPRING_PROFILES_ACTIVE: docker
->>>>>>> test
+      eureka:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SPRING_AI_OPENAI_API_KEY: ${OPENAI_API_KEY}
     networks:
       - app-network
 
