@@ -31,9 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-<<<<<<< HEAD
-src/main/resources/application.properties
-.xls
-=======
-src/main/resources/application.properties
->>>>>>> test
+src/main/resources/application-aws.properties

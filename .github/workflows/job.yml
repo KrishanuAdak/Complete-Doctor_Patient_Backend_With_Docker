@@ -151,9 +151,3 @@ jobs:
             docker ps
             cd appointment-booking-microservices
             docker compose ps
-
-<<<<<<< HEAD
-# ```
-=======
-# ```
->>>>>>> test

@@ -1,11 +1,7 @@
 package com.example.demo1.configuration;
 
-<<<<<<< HEAD
-import org.springframework.beans.factory.annotation.Autowired;
-=======
 import java.util.List;
 
->>>>>>> test
 import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
@@ -21,35 +17,16 @@ public class GatewayConfig {
         private final JwtAuthenticationFilter jwtAuthenticationFilter;
         private final User_Role_Based_Key_Resolver keyResolver;
 
-<<<<<<< HEAD
-        @Autowired
-        private User_Role_Based_Key_Resolver keyResolver;
-
-=======
         public GatewayConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
                         User_Role_Based_Key_Resolver keyResolver) {
                 this.jwtAuthenticationFilter = jwtAuthenticationFilter;
                 this.keyResolver = keyResolver;
         }
->>>>>>> test
 
         @Bean
         public RedisRateLimiter redisRateLimiter() {
                 return new RedisRateLimiter(15, 25);
         }
-<<<<<<< HEAD
-       @Bean
-       public CorsWebFilter corsFilter() {
-                org.springframework.web.cors.CorsConfiguration config = new org.springframework.web.cors.CorsConfiguration();
-                config.setAllowCredentials(true);
-                config.addAllowedOrigin("https://appointment-easy-bengal.in");
-                config.addAllowedOrigin("https://www.appointment-easy-bengal.in");
-                config.addAllowedOrigin("http://localhost:4200"); 
-                config.addAllowedHeader("*");
-                config.addAllowedMethod("*");
-                org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource();
-                source.registerCorsConfiguration("/**", config);
-=======
 
         @Bean
         public CorsWebFilter corsFilter() {
@@ -86,7 +63,6 @@ public class GatewayConfig {
                 source.registerCorsConfiguration("/admin/**", privateConfig);
                 source.registerCorsConfiguration("/appointment/**", privateConfig);
                 source.registerCorsConfiguration("/payments/**", privateConfig);
->>>>>>> test
 
                 return new CorsWebFilter(source);
         }

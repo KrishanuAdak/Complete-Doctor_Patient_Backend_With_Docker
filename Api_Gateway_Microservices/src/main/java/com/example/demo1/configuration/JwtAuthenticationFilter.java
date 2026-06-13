@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -43,12 +44,8 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             }
         }
         String path = exchange.getRequest().getURI().getPath();
-<<<<<<< HEAD
-        if (path.startsWith("/appointment/v1/appointments/count") || path.contains("/verified-doctor/counts")) {
-=======
         System.out.println("Path -"+path);
         if (path.startsWith("/appointment/v1/appointments/count") || path.contains("/verified-doctor/counts") || path.startsWith("/ai/chat")) {
->>>>>>> test
             System.out.println("Skipping authentication for path: " + path);
             return chain.filter(exchange);
         }
