@@ -4,7 +4,6 @@ package com.example.demo1.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,28 +18,24 @@ import com.example.demo1.util.JwtUtil;
 @Service
 public class AuthService {
 	private static final Logger logger=LoggerFactory.getLogger(AuthService.class);
-	public AuthService() {
-		// TODO Auto-generated constructor stub
+	public AuthService(AuthRepo repo, PasswordEncoder encoder, AuthenticationManager authManager, com.example.demo1.util.JwtUtil jwtUtil) {
+		this.repo = repo;
+		this.encoder = encoder;
+		this.authManager = authManager;
+            this.jwtUtil = jwtUtil;
 	}
 
-	@Autowired
-	private AuthRepo repo;
+	private final AuthRepo repo;
 	
 
-	@Autowired
-	private JwtUtil jwtUtil;
+	private final JwtUtil jwtUtil;
 	
-	@Autowired
-	private PasswordEncoder encoder;
+	private final PasswordEncoder encoder;
 	
-	@Autowired 
-	private AuthenticationManager authManager;
+	private final AuthenticationManager authManager;
     
-<<<<<<< HEAD
-=======
 	// @Autowired
 	// private KafkaTemplate<String, Object> kafkaTemplate;
->>>>>>> test
 	
 	
 	public AuthDB  saveAuthDetails(AuthDB auth) {
@@ -56,10 +51,7 @@ public class AuthService {
 
     try {
         AuthDB savedAuth = repo.save(data);
-<<<<<<< HEAD
-=======
 		//this.kafkaTemplate.send("new-user-registered", savedAuth);
->>>>>>> test
         return savedAuth;
 
     } catch (DataIntegrityViolationException e) {
