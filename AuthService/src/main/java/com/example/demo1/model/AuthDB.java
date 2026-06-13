@@ -17,18 +17,9 @@ public class AuthDB {
 	@Size(min=8)
 	private String password;
 	private String role;
-<<<<<<< HEAD
 	private String username;
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	public int getId() {
-=======
+	
 	public long getId() {
->>>>>>> test
 		return id;
 	}
 	public void setId(long id) {
@@ -52,13 +43,10 @@ public class AuthDB {
 	public void setRole(String role) {
 		this.role = role;
 	}
-<<<<<<< HEAD
-
-	public AuthDB(int id, String email, String password, String role, String username) {
-=======
 	
-	public AuthDB(long id, String email, String password, String role) {
->>>>>>> test
+	
+	
+	public AuthDB(long id, String email, String password, String role,String username) {
 		super();
 		this.id = id;
 		this.email = email;
@@ -71,6 +59,12 @@ public class AuthDB {
 	public AuthDB() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
 	}
 	
 

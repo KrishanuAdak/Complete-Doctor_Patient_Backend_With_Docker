@@ -48,6 +48,11 @@ jobs:
         run: |
           cd Api_Gateway_Microservices
           mvn clean package -DskipTests
+      - name: Build AI Service
+        run: |
+          cd ai-service
+          mvn clean package -DskipTests
+
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -86,6 +91,13 @@ jobs:
           docker build -t api-gateway .
           docker tag api-gateway:latest $ECR_REGISTRY/api-gateway:latest
           docker push $ECR_REGISTRY/api-gateway:latest
+       - name: Build and Push AI Service
+        run: |
+          cd ai-service
+          docker build -t ai-service .
+          docker tag api-gateway:latest $ECR_REGISTRY/ai-service:latest
+          docker push $ECR_REGISTRY/ai-service:latest
+
 
       - name: Deploy To EC2
         uses: appleboy/ssh-action@v1.0.3
