@@ -13,10 +13,10 @@ import com.example.demo1.model.DoctorDetailsToAppointment;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface DoctorRepo extends JpaRepository<Doctor,Integer> {
+public interface DoctorRepo extends JpaRepository<Doctor,Long> {
 	 
-    @Query(value="select doctor_name as doctor_Name,phone_number as phone_number from doctor_basic_details where doctor_id=?1",nativeQuery=true)
-	public DoctorDetailsToAppointment findDetailsById(int id);
+    @Query(value="select doctor_name as doctor_Name,phone_number as phone_number from doctor_basic_details where auth_user_id=?1",nativeQuery=true)
+	public DoctorDetailsToAppointment findDetailsById(long  id);
 	
 	
 	@Query(value="select id from doctor_basic_details where doctor_name=?1",nativeQuery=true)
@@ -27,17 +27,17 @@ public interface DoctorRepo extends JpaRepository<Doctor,Integer> {
 	public String findByEmail(String email);
 
 	
-	@Query(value="select * from doctor_basic_details where doctor_name=?1",nativeQuery=true)
-    public Optional<Doctor> findByDoctorname(String doctor_name);
+	@Query(value="select auth_user_id from doctor_basic_details where doctor_name=?1 and  city= ?2",nativeQuery=true)
+    public long findIdByDoctornameAndCityName(String doctor_name , String city);
 	
 	
-	@Query(value="select approval_status from doctor_list where doctor_name=?1",nativeQuery=true)
-	public String checkApprovalStatus(String doctor_name);
+	// @Query(value="select approval_status from doctor_list where doctor_name=?1",nativeQuery=true)
+	// public String checkApprovalStatus(String doctor_name);
 	
 	@Modifying
 	@Transactional
 	@Query(value="update doctor set approval_status=?1 where id=?2 and lock_version=false",nativeQuery=true)
-	public void updateApprovalStatusByAdmin(String approval_status,int id);
+	public void updateApprovalStatusByAdmin(String approval_status,long id);
 	
 
 	
@@ -45,7 +45,7 @@ public interface DoctorRepo extends JpaRepository<Doctor,Integer> {
 	@Query(value="select count(*) from doctor_basic_details where is_Registration_Verified = true ",nativeQuery=true)
 	public int countOfVerifiedDoctors();
  
-    @Query(value="select * from doctor_basic_details where auth_user_id=?1",nativeQuery=true)
+    @Query(value="select * from Doctor_Basic_Details where auth_user_id=?1",nativeQuery=true)
 	public Optional<Doctor> findByAuthUserId(Long authUserId);
 	
 

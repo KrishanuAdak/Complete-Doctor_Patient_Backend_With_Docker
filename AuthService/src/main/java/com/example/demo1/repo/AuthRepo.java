@@ -16,5 +16,7 @@ public interface AuthRepo extends JpaRepository<AuthDB,Integer>{
 
 	@Query(value="select email from authdb where role=patient and id=?1",nativeQuery=true)
 	public String getEmailByPatientId(int id);
+	@Query(value="select username from authdb where email=?1",nativeQuery=true)
+	public String getUsernameByEmail(String email);
 
 }

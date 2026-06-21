@@ -18,7 +18,7 @@ public class AiController {
 
     @GetMapping(value="/chat",produces = MediaType.TEXT_PLAIN_VALUE)
     public String chat(@RequestParam String query) {
-        return agent.chatAndReply(query);
+        return this.agent.chatAndReply(query);
     }
 
 }

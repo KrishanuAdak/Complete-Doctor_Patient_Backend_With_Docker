@@ -16,8 +16,11 @@ import com.example.demo1.filter.jwtRequestFilter;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-    @Autowired
-    private jwtRequestFilter filter;
+    private final jwtRequestFilter filter;
+
+    public SecurityConfig(jwtRequestFilter filter) {
+        this.filter = filter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

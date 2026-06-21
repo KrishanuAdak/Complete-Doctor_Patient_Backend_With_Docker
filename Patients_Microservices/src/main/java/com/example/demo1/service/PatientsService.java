@@ -1,84 +1,61 @@
 package com.example.demo1.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.demo1.model.AuthDetails;
-import com.example.demo1.model.Available_Doctor_Now;
-import com.example.demo1.model.Doctor;
+import com.example.demo1.model.Patient_Details_To_Admin;
 import com.example.demo1.model.Patients;
-import com.example.demo1.openFeign.AuthFeign;
-import com.example.demo1.openFeign.OpenFeign;
 import com.example.demo1.repo.PatientsRepo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import jakarta.persistence.Cacheable;
-
 @Service
 public class PatientsService {
-	
-	@Autowired
-	private PatientsRepo repo;
-	
-//	@Autowired
-//	private OpenFeign openFiegn;
-//	
-//	private ObjectMapper mapper;
-	
-//	@Autowired
-//	private PasswordEncoder encoder;
-	@Autowired
-	private AuthFeign feign;
-	
-	@Autowired
-	private KafkaTemplate<String, Patients> kafkaTemplate;
-	
-	
-	
-	
-//	public Patients savePatientBasicDetails(Patients p)
-//	{
-//		
-//		Patients pt=p; 
-//		Random rand=new Random();
-//		int id=rand.nextInt(999999999)+1;
-//		pt.setId(id);	
-//		pt.setUsername(p.getUsername());
-//		pt.setEmail(p.getEmail());
-//		pt.setPassword(encoder.encode(p.getPassword()));
-//		pt.setPhone_number(p.getPhone_number());
-//		pt.setLock_version(false);
-//		pt.setRole("USER");
-//		pt.setCreation_date(LocalDateTime.now());
-//		Patients x=this.repo.save(pt);
-//		AuthDetails auth=new AuthDetails();
-//		auth.setEmail(p.getEmail());
-//		auth.setPassword(encoder.encode(p.getPassword()));
-//		auth.setRole(p.getRole());
-//		auth.setIdentity_id(id);
-//		AuthDetails d=this.feign.savePatientsAuthDetails(auth);		
-////		kafkaTemplate.send("new-patients-added",x);		
-//		return x;
-//	}
-	
-	
-	
 
-	
+	private final PatientsRepo repo;
 
-	public List<Patients> getPatientByName(String name){
-		return this.repo.showPatientsByName(name);
-		
+	public PatientsService(PatientsRepo repo) {
+		this.repo = repo;
 	}
-	
-	
+
+	public Patients saveOrUpdatePatientDetails(Patients p,long patient_id) {
+		Optional<Patients> getDetails=this.repo.findDetailsByAuthUserId(patient_id);
+		if(getDetails.isEmpty()){
+		if (p != null) {
+			Patients detailsPatient = new Patients();
+			detailsPatient.setCity(p.getCity());
+			detailsPatient.setPhone_number(p.getPhone_number());
+			detailsPatient.setPin(p.getPin());
+			detailsPatient.setPatient_id(patient_id);
+			Patients savedPatient = this.repo.save(detailsPatient);
+			return savedPatient;
+		}
+	}else{
+		Patients detailsPatient=p;
+		     detailsPatient.setCity(p.getCity());
+			detailsPatient.setPhone_number(p.getPhone_number());
+			detailsPatient.setPin(p.getPin());
+			detailsPatient.setPatient_id(patient_id);
+			Patients savedPatient = this.repo.save(detailsPatient);
+            return savedPatient;
+	}
+	return null;
+
+	}
+
+	public Optional<Patients> getPatientByName(String name) {
+		return this.repo.showPatientByName(name);
+
+	}
+	public Patient_Details_To_Admin getPatientById(long id) throws Exception{
+		Optional<Patients> isExists=this.repo.findDetailsByAuthUserId(id);
+		if(isExists.isEmpty()){
+			throw new Exception("Patient Details Not Found");
+		}
+		Patient_Details_To_Admin pp=new Patient_Details_To_Admin();
+		pp.setPatient_name(this.repo.findDetailsByAuthUserId(id).get().getFullName());
+		pp.setPhone_number(this.repo.findDetailsByAuthUserId(id).get().getPhone_number());
+		return pp;
+
+	}
+
 
 }

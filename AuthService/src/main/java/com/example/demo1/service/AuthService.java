@@ -60,9 +60,6 @@ public class AuthService {
 
 	}
 	
-	public String getEmail(int patient_id) {
-		return this.repo.getEmailByPatientId(patient_id);
-	}
 	public String login(AuthDB auth) {
 		logger.info("Login attempt for email: {}", auth.getEmail());
 			authManager.authenticate(
@@ -72,6 +69,10 @@ public class AuthService {
 	    String token = jwtUtil.generateToken(auth.getEmail());
 	    return token;
 	    
+	}
+	public String getUsernameByEmail(String email){
+		String name=this.repo.getUsernameByEmail(email);
+		return name.length()>0? name:"USER";
 	}
 	
 

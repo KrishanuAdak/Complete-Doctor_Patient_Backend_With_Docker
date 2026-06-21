@@ -44,8 +44,7 @@ public class GatewayConfig {
                 privateConfig.setAllowCredentials(true);
                 privateConfig.setAllowedOrigins(List.of(
                                 "http://localhost:4200",
-                                "https://appointment-easy-bengal.in"
-                ));
+                                "https://appointment-easy-bengal.in"));
                 privateConfig.addAllowedHeader("*");
                 privateConfig.addAllowedMethod("*");
                 privateConfig.setMaxAge(3600L);
@@ -94,11 +93,12 @@ public class GatewayConfig {
                                 // Admin Service
                                 .route("admin-service", r -> r.path("/admin/**")
                                                 .filters(f -> f
-                                                                .filter(jwtAuthenticationFilter))
+                                                             .filter(jwtAuthenticationFilter))
                                                 .uri("lb://admin-service"))
 
                                 // Auth Service (public)
                                 .route("auth-service", r -> r.path("/auth-service/**")
+                                                .filters(f -> f.filter(jwtAuthenticationFilter))
                                                 .uri("lb://auth-service"))
 
                                 // Appointment Service
@@ -121,7 +121,9 @@ public class GatewayConfig {
 
                                 // ✅ AI Service (public — no JWT, no rate limit, strip /ai prefix)
                                 .route("ai-service", r -> r.path("/ai/**")
-                                                .filters(f -> f.stripPrefix(1))
+                                                .filters(f -> f.stripPrefix(1)
+                                       .filter(jwtAuthenticationFilter)
+                                )
                                                 .uri("lb://ai-service"))
 
                                 .build();

@@ -1,4 +1,4 @@
-package com.example.demo1.dto;
+package ai.service.ai_service.dto;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;

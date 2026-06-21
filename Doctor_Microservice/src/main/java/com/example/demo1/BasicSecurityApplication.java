@@ -6,15 +6,17 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {
+    "com.example.demo1",
+    "com.krishanu.security"
+})
+
 @EnableCaching
 @EnableScheduling
-@EnableJpaRepositories
 @EnableDiscoveryClient
 @EnableJpaAuditing
 @EntityScan(basePackages = "com.example.demo1.model")

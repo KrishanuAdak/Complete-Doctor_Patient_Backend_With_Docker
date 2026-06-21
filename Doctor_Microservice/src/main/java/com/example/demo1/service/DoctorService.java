@@ -1,9 +1,7 @@
 package com.example.demo1.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -13,13 +11,20 @@ import com.example.demo1.model.Doctor;
 import com.example.demo1.model.DoctorDetailsToAppointment;
 import com.example.demo1.repo.DoctorRepo;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class DoctorService {
-	@Autowired
-	private DoctorRepo repo;
+	private final DoctorRepo repo;
 
 
-	public boolean isExistsDoctor(int id) {
+	public DoctorService(DoctorRepo repo) {
+		this.repo = repo;
+	}
+
+
+	public boolean isExistsDoctor(long id) {
 		return this.repo.existsById(id);
 	}
 
@@ -27,14 +32,14 @@ public class DoctorService {
 		return this.repo.getIdFromLoginByUsername(name);
 	}
 
-	public Doctor saveBasicDetails(Doctor d) {
+	public Optional<Doctor> saveBasicDetails(Doctor d,long auth_user_id) {
+		log.info("hit save service");
 		Doctor doctor = new Doctor();
 		if (d != null) {
 
-			doctor.setAuth_user_id(d.getAuth_user_id());
-			doctor.setCreation_date(LocalDateTime.now());
+			doctor.setAuth_user_id(auth_user_id);
 			doctor.setDoctor_name(d.getDoctor_name());
-			doctor.setPhone_number(doctor.getPhone_number());
+			doctor.setPhone_number(d.getPhone_number());
 			doctor.setFileName(d.getFileName());
 			doctor.setRegistrationFile_Url(d.getRegistrationFile_Url());
 			doctor.setRegistrationNumber(d.getRegistrationNumber());
@@ -42,11 +47,12 @@ public class DoctorService {
 			doctor.setCity(d.getCity());
 			doctor.setExperience(d.getExperience());
 			doctor.setPincode(d.getPincode());
-			Doctor dd = this.repo.save(doctor);
-			return dd;
+			doctor.setSpeclization(d.getSpeclization());
+
+			return Optional.of(this.repo.save(doctor));
 
 		}
-		return null;
+		return Optional.empty();
 
 	}
 
@@ -69,7 +75,7 @@ public class DoctorService {
 	}
 
 	@Cacheable(value = "doctors", key = "#id")
-	public Doctor getById(int id) {
+	public Doctor getById(long id) {
 		return this.repo.findById(id).orElseThrow(() -> new RuntimeException("Doctor id not found"));
 	}
 
@@ -86,24 +92,26 @@ public class DoctorService {
 	}
 
 	@CacheEvict(value = "doctors", key = "#id")
-	public void delete(int id) {
+	public void delete(long id) {
 		this.repo.deleteById(id);
 
 	}
 
-	public void updateApprovalStatus(int id, String status) {
+	public void updateApprovalStatus(long id, String status) {
 		Doctor d = this.repo.findById(id).orElseThrow(() -> new RuntimeException("Doctor not found"));
 
 		this.repo.updateApprovalStatusByAdmin(status, id);
 
 	}
 
-	// public List<Doctor> getBySearch(String name, String email) {
-	// 	List<Doctor> doctor = this.repo.searchByDoctor(name, email);
-	// 	if (doctor == null) {
-	// 		return null;
-	// 	}
-	// 	return doctor;
-	// }
+	public long  FindIDByDoctorNameAndCityName(String name,String city) {
+		long id=
+		this.repo.findIdByDoctornameAndCityName(name,city);
+		// if(doctorDetails.isEmpty()){
+		// 	return null;
+		// }
+		return id;
+	
+	}
 
 }

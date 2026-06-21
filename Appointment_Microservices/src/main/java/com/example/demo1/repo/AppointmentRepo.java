@@ -28,7 +28,7 @@ public interface AppointmentRepo extends JpaRepository<Appointment_book_by_Patie
 	List<AppointmentViewByDoctor> checkIfAnyAppointmentPending(String status, int doctor_id);
 
 	@Query(value = "select * from appointment_booked_by_patients where id=?1 and doctor_id=?2", nativeQuery = true)
-	public Optional<Appointment_book_by_Patient> getAppointmentDetailsById(int appointment_id, int doctor_id);
+	public Optional<Appointment_book_by_Patient> getAppointmentDetailsById(long appointment_id,long doctor_id);
     
 	@Query(value = "select count(a.id) from appointment_booked_by_patients a join appointment_status s on a.appointment_status_id=s.id where s.status_name='approved';", nativeQuery = true)
 	public int countOfCompletedAppointments();

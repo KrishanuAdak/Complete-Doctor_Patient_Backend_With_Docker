@@ -3,17 +3,16 @@ package com.example.demo1.controller;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired; // Spring Boot 3.x
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo1.model.AuthDB;
 import com.example.demo1.service.AuthService;
 import com.example.demo1.util.JwtUtil;
@@ -25,11 +24,15 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth-service")
+@CrossOrigin("http://localhost:4200")
 public class AuthController {
-	@Autowired
-	private AuthService service;
-	@Autowired
-	private JwtUtil jwtUtil;
+	private final AuthService service;
+	private final JwtUtil jwtUtil;
+
+	AuthController(AuthService service, JwtUtil jwtUtil) {
+		this.service = service;
+		this.jwtUtil = jwtUtil;
+	}
 
 	@GetMapping("/test")
 	public String test() {
@@ -62,7 +65,7 @@ public class AuthController {
 			cookie.setDomain("appointment-easy-bengal.in"); // ← no subdomain, covers all subdomains
 			response.addCookie(cookie); // attach to response
 			Map<String, Object> res = new HashMap<>();
-			res.put("token", "Token Login Success!!");
+			res.put("token", token);
 			res.put("status", HttpStatus.OK.value());
 			return ResponseEntity.status(HttpStatus.OK).body(res);
 		} catch (Exception e) {
@@ -100,10 +103,10 @@ public class AuthController {
 		}
 	}
 
-	@GetMapping("/patient/{id}")
-	public String getEmailById(@PathVariable("id") int patient_id) {
-		return this.service.getEmail(patient_id);
-	}
+	// @GetMapping("/patient/{id}")
+	// public String getEmailById(@PathVariable("id") int patient_id) {
+	// 	return this.service.getEmail(patient_id);
+	// }
 
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpServletResponse response) {
@@ -116,5 +119,10 @@ public class AuthController {
 		response.addCookie(cookie);
 		return ResponseEntity.ok(Map.of("message", "Logged out"));
 	}
+	@GetMapping("/get-user")
+	public String getUsernameByEmail(@RequestHeader("X-User-Email") String email){
+		return this.service.getUsernameByEmail(email);
+	}
+	
 
 }

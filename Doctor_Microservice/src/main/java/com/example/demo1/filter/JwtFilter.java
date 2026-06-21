@@ -3,6 +3,7 @@ package com.example.demo1.filter;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -17,9 +18,9 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
     @Override
-protected void doFilterInternal(HttpServletRequest request,
-        HttpServletResponse response,
-        FilterChain filterChain) throws ServletException, IOException {
+protected void doFilterInternal(@NonNull HttpServletRequest request,
+        @NonNull HttpServletResponse response,
+        @NonNull FilterChain filterChain) throws ServletException, IOException {
 
     String path = request.getRequestURI();
 
@@ -27,9 +28,10 @@ protected void doFilterInternal(HttpServletRequest request,
     try {
         String role = request.getHeader("X-User-Role");
         String userId = request.getHeader("X-User-Id");
-        System.out.println("Role: " + role + ", UserId: " + userId);
+        System.out.println("From JWT Filter --> Role: " + role + ", UserId: " + userId+ " path: "+path);
 
-        if ((role == null || userId == null) && !path.contains("/doctor/verified-doctor/counts")) {
+        if ((role == null || userId == null) && !path.contains("/doctor/verified-doctor/counts")&&
+        !path.contains("/doctor/feign/details")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json");
             response.getWriter().write("{\"error\":\"Missing headers\"}");

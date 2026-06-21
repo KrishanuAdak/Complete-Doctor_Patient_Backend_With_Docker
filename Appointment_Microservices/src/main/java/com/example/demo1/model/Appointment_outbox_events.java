@@ -1,7 +1,6 @@
 package com.example.demo1.model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +17,7 @@ import jakarta.persistence.Table;
 public class Appointment_outbox_events {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
     
     // Event type (APPOINTMENT_CREATED, PAYMENT_SUCCESS)
     @Column(name = "event_type", nullable = false)
@@ -62,11 +61,11 @@ public class Appointment_outbox_events {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -126,7 +125,7 @@ public class Appointment_outbox_events {
         this.updatedAt = updatedAt;
     }
 
-    public Appointment_outbox_events(int id, String eventType, String aggregateId, String payload, String status,
+    public Appointment_outbox_events(long id, String eventType, String aggregateId, String payload, String status,
             int retryCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.eventType = eventType;

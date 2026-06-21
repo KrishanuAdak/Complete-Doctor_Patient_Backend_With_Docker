@@ -45,7 +45,8 @@ public class JwtAuthenticationFilter implements GatewayFilter {
         }
         String path = exchange.getRequest().getURI().getPath();
         System.out.println("Path -"+path);
-        if (path.startsWith("/appointment/v1/appointments/count") || path.contains("/verified-doctor/counts") || path.startsWith("/ai/chat")) {
+        if (path.startsWith("/appointment/v1/appointments/count") || path.contains("/verified-doctor/counts") || path.startsWith("/ai/chat")
+        || path.startsWith("/auth-service/login") || path.startsWith("auth-service/register")) {
             System.out.println("Skipping authentication for path: " + path);
             return chain.filter(exchange);
         }
@@ -70,7 +71,7 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             String subject = claims.getSubject();
 
             ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
-                    .header("X-User-name", subject)
+                    .header("X-User-Email", subject)
                     .header("X-User-Role", role)
                     .header("X-User-Id", user_id_parsed)
                     .header("X-Secret-Key", secretKey)

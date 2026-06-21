@@ -32,8 +32,11 @@ import com.example.demo1.exception.AuthAccessDeniedHandler;
 public class AuthConfiguration {
 
 	@Lazy
-	@Autowired
-	private UserDetailsImpl userDetails;
+	private final UserDetailsImpl userDetails;
+
+	AuthConfiguration(UserDetailsImpl userDetails) {
+		this.userDetails = userDetails;
+	}
 
 	@Bean
 	public RedisTemplate<String, AuthDB> redisTemplate(RedisConnectionFactory connectionFactory) {

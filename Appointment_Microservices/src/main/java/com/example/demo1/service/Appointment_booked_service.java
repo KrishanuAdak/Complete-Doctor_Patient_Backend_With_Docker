@@ -8,17 +8,15 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Description;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import com.example.demo1.model.Appointment_Status_Mapping;
+
 import com.example.demo1.NotificationResponse.AppointmentDetails;
 import com.example.demo1.NotificationResponse.NotificationEvent;
 import com.example.demo1.NotificationResponse.Patient_Details_To_Admin;
-import com.example.demo1.dto.AppointmentStatus_Dto;
 import com.example.demo1.dto.AppointmentViewByDoctor;
 import com.example.demo1.dto.Appointment_Dto;
 import com.example.demo1.model.Appointment_book_by_Patient;
@@ -32,6 +30,7 @@ import com.example.demo1.repo.Appointment_Status_Repo;
 import com.example.demo1.repo.Disease_list_repo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 
@@ -42,29 +41,31 @@ public class Appointment_booked_service {
 
 	private static final String TOPIC = "appointment-booked-by-patients";
 
-	@Autowired(required = true)
-	private KafkaTemplate<String, Object> kafkaTemplate;
 
-	@Autowired
-	private AppointmentRepo AppointmentRepo;
+	private final AppointmentRepo AppointmentRepo;
 
-	@Autowired
-	private Disease_list_repo DiseaseRepo;
+	private final Disease_list_repo DiseaseRepo;
 
-	@Autowired
-	private PatientsFiegn feign;
+	private final PatientsFiegn feign;
 
-	@Autowired
-	private Appointment_Status_Repo AppointmentStatusRepo;
+	private final Appointment_Status_Repo AppointmentStatusRepo;
 
-	@Autowired
-	private DoctorFeign doctorFeign;
+	private final DoctorFeign doctorFeign;
 
-	@Autowired
-	private AppointmentOutboxRepo outboxRepo;
+	private final AppointmentOutboxRepo outboxRepo;
 
-	@Autowired
-	private ObjectMapper objectMapper;
+	private final ObjectMapper objectMapper;
+
+
+	public Appointment_booked_service(AppointmentRepo AppointmentRepo, Disease_list_repo DiseaseRepo, PatientsFiegn feign, Appointment_Status_Repo AppointmentStatusRepo, DoctorFeign doctorFeign, AppointmentOutboxRepo outboxRepo, ObjectMapper objectMapper) {
+		this.AppointmentRepo = AppointmentRepo;
+		this.DiseaseRepo = DiseaseRepo;
+		this.feign = feign;
+		this.AppointmentStatusRepo = AppointmentStatusRepo;
+		this.doctorFeign = doctorFeign;
+		this.outboxRepo = outboxRepo;
+		this.objectMapper = objectMapper;
+	}
 
 
 	public int countOfCompletedAppointments() {
@@ -72,7 +73,7 @@ public class Appointment_booked_service {
 			return this.AppointmentRepo.countOfCompletedAppointments();
 		} catch (Exception e) {
 			logger.error("Error while counting completed appointments: " + e.getMessage());
-			return -1; // Indicating an error occurred
+			return -1;
 		}
 	}
 
@@ -84,7 +85,7 @@ public class Appointment_booked_service {
 		notification.setAppointment_scheduled(details.getAppointment_scheduled());
 		notification.setBooking_time(LocalTime.now());
 		notification.setPhoneNumber(details.getPhoneNumber());
-		this.kafkaTemplate.send(TOPIC, notification);
+		// this.kafkaTemplate.send(TOPIC, notification);
 	}
 
 	@Transactional
@@ -105,7 +106,7 @@ public class Appointment_booked_service {
 			data1.setAppointment_status_id(status_id);
 			data1.setAppointment_booked_time(LocalDateTime.now());
 
-			Appointment_book_by_Patient p = this.AppointmentRepo.save(data1);
+			Appointment_book_by_Patient savedAppointment_book_by_Patient= this.AppointmentRepo.save(data1);
 
 			// Get Data from open feign for Patient Id
 			Patient_Details_To_Admin patient_details = this.feign.getPatientById(Integer.parseInt(userid));
@@ -114,27 +115,29 @@ public class Appointment_booked_service {
 			NotificationEvent event = new NotificationEvent();
 			event.setAppointment_scheduled(data.getAppointment_scheduled_time());
 			event.setPhoneNumber(patient_details.getPhone_number());
-			this.TriggerKafkaProducer_To_Admin(event, Integer.parseInt(userid));
+			//this.TriggerKafkaProducer_To_Admin(event, Integer.parseInt(userid));
 			// Get Doctor Detaild from OpenFeign
-			DoctorDetailsToAppointment docDetails = this.doctorFeign.sendDoctorDetailsToAppointment(8);
+			DoctorDetailsToAppointment docDetails = this.doctorFeign.sendDoctorDetailsToAppointment(data.getDoctor_id());
 			logger.info("doctor id : " + data1.getDoctor_id());
 
 			/// NEED TO IMPLEMENT OUTBOX PATTERN HERE FOR HANDLING NOTIFICATION TO DOCTOR //
-
-			this.notifyDoctorToApproveAppointment(p.getId(), p.getAppointment_scheduled_time(),
+			this.notifyDoctorToApproveAppointment(savedAppointment_book_by_Patient.getId(), savedAppointment_book_by_Patient.getAppointment_scheduled_time(),
 					data.getDisease_description(),
-					"Hello , Dr." + docDetails.getDoctor_name() + " one new Appointment has been booked for you by "
+					"Hello , Dr." + docDetails.getDoctor_name() + " , One new Appointment has been booked by "
 							+ patient_details.getPatient_name(),
-					patient_details.getPhone_number(), p.getDisease_description(), docDetails.getPhone_number());
-			return p;
+					patient_details.getPhone_number(), savedAppointment_book_by_Patient .getDisease_description(), docDetails.getPhone_number());
+			return savedAppointment_book_by_Patient;
 
 		}
 
 		return null;
 
 	}
-
-	public void notifyDoctorToApproveAppointment(int appointment_id, LocalDateTime scheduled_time, String disease,
+    @Description("""
+		This function will save the details in kafka outbox with status new. 
+		After every 5 secs which details will be stored here will be updated to status sent otherwise failed		
+			""")
+	public void notifyDoctorToApproveAppointment(long appointment_id, LocalDateTime scheduled_time, String disease,
 			String details,
 			String patient_phonenumber, String disease_description, String doctor_phone_number)
 			throws JsonProcessingException {
@@ -161,7 +164,7 @@ public class Appointment_booked_service {
 		}
 
 	}
-	public void notifypatientsForAppointmentStatus(int appointment_id, String status, String doctor_name, String patient_phone_number) throws JsonProcessingException {
+	public void notifypatientsForAppointmentStatus(long appointment_id, String status, String doctor_name, String patient_phone_number) throws JsonProcessingException {
 		try {
 			AppointmentDetails detailsToPatient = new AppointmentDetails();
 			Appointment_outbox_events outboxEvent = new Appointment_outbox_events();
@@ -174,6 +177,7 @@ public class Appointment_booked_service {
 			logger.info("Payload for Kafka: " + json);
 			outboxEvent.setEventType("update-appointment-by-doctor");
 			outboxEvent.setAggregateId(String.valueOf(appointment_id));
+			outboxEvent.setStatus(status);
 			this.outboxRepo.save(outboxEvent);
 
 		} catch (Exception e) {
@@ -191,13 +195,13 @@ public class Appointment_booked_service {
 	}
 
 	@Transactional
-	public ResponseEntity<?> approveOrRejectAppointmentByDoctor(int appointment_id, AppointmentStatus_Dto dto)
+	public ResponseEntity<?> approveOrRejectAppointmentByDoctor(long appointment_id, String status,long doctor_id)
 			throws Exception {
 
 		try {
 			Optional<Appointment_book_by_Patient> optional = this.AppointmentRepo.getAppointmentDetailsById(
 					appointment_id,
-					dto.getDoctor_id());
+					doctor_id);
 
 			if (optional.isEmpty()) {
 				return ResponseEntity.badRequest().body("No Appointment Found");
@@ -207,8 +211,8 @@ public class Appointment_booked_service {
 			int pendingStatusId = this.AppointmentStatusRepo.findIdByStatusName("pending");
 
 			// Validate status
-			String status = dto.getStatus().toUpperCase();
-			if (!status.equals("APPROVED") && !status.equals("REJECTED")) {
+			String statusToUpperCase = status.toUpperCase();
+			if (!statusToUpperCase.equals("APPROVED") && !status.equals("REJECTED")) {
 				System.out.println("Invalid status: " + status);
 				return ResponseEntity.badRequest().body("Invalid Status");
 			}
@@ -226,7 +230,7 @@ public class Appointment_booked_service {
 			data.setAppointment_status_id(statusId);
 			data.setApprovedOrRejected_At(LocalDateTime.now());
 			this.AppointmentRepo.save(data);
-			DoctorDetailsToAppointment doctor_name = this.doctorFeign.sendDoctorDetailsToAppointment(dto.getDoctor_id());
+			DoctorDetailsToAppointment doctor_name = this.doctorFeign.sendDoctorDetailsToAppointment(doctor_id);
 			Patient_Details_To_Admin patient_details = this.feign.getPatientById(data.getPatient_id());
 			this.notifypatientsForAppointmentStatus(appointment_id, status, doctor_name.getDoctor_name(), patient_details.getPhone_number());
 			return ResponseEntity.ok("Appointment " + status + " successfully");

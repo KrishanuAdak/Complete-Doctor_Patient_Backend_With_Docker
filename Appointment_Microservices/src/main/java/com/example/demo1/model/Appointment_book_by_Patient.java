@@ -10,6 +10,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -23,18 +25,19 @@ public class Appointment_book_by_Patient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-
+    private long id;
     @NotNull
-    private int patient_id;
-
+    @Min(1)
+    private long patient_id;
     @NotNull
-    private int doctor_id;
-
+    @Min(1)
+    private long doctor_id;
+    @NotBlank
     private String disease_category;
-
+    @NotBlank
     private String disease_description;
-
+    @NotNull
+    @Min(1)
     private int appointment_status_id;
 
     @FutureOrPresent(message = "Appointment Date should not be past date")
@@ -47,18 +50,17 @@ public class Appointment_book_by_Patient {
     @Version
     private int version;
 
+    public long getId() { return id; }
 
-    
+    public long getPatient_id() { return patient_id; }
+    public void setPatient_id(long patient_id) { this.patient_id = patient_id; }
 
+    public long getDoctor_id() 
+    { 
+        return doctor_id;
 
-
-    public int getId() { return id; }
-
-    public int getPatient_id() { return patient_id; }
-    public void setPatient_id(int patient_id) { this.patient_id = patient_id; }
-
-    public int getDoctor_id() { return doctor_id; }
-    public void setDoctor_id(int doctor_id) { this.doctor_id = doctor_id; }
+    }
+    public void setDoctor_id(long doctor_id) { this.doctor_id = doctor_id; }
 
     public String getDisease_category() { return disease_category; }
     public void setDisease_category(String disease_category) { this.disease_category = disease_category; }
@@ -69,7 +71,7 @@ public class Appointment_book_by_Patient {
     public LocalDateTime getAppointment_scheduled_time() { return appointment_scheduled_time; }
     
 	
-    public void setId(int id) {
+    public void setId(long id) {
 		this.id = id;
 	}
 
@@ -92,7 +94,7 @@ public class Appointment_book_by_Patient {
 
     public Appointment_book_by_Patient() {}
 
-	public Appointment_book_by_Patient(int id, @NotNull int patient_id, @NotNull int doctor_id, String disease_category,
+	public Appointment_book_by_Patient(long id, @NotNull long patient_id, @NotNull long doctor_id, String disease_category,
 			String disease_description, int appointment_status_id,
 			@FutureOrPresent(message = "Appointment Date should not be past date") LocalDateTime appointment_scheduled_time,
 			LocalDateTime appointment_booked_time,LocalDateTime approvedOrRejected_At, int version) {

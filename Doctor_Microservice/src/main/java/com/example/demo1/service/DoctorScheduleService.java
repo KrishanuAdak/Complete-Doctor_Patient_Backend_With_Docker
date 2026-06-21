@@ -1,6 +1,7 @@
 package com.example.demo1.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class DoctorScheduleService {
      * If not → create new.
      */
     @Transactional
-    public DoctorScheduleResponse saveSchedule(
+    public DoctorScheduleResponse saveOrUpdateSchedule(
             Long authUserId,                  // from JWT
             DoctorScheduleRequest request) {
 
@@ -71,6 +72,7 @@ public class DoctorScheduleService {
                 // CREATE new schedule
                 log.info("Creating new schedule for day={}", 
                     request.getDayOfWeek());
+                    System.out.println("save"+ doctor.getAuth_user_id());
                 return DoctorSchedule.builder()
                     .doctor(doctor)
                     .dayOfWeek(request.getDayOfWeek())
@@ -84,7 +86,7 @@ public class DoctorScheduleService {
         log.info("Schedule saved successfully id={}", saved.getId());
 
         return DoctorScheduleResponse.builder()
-            .id(saved.getId())
+            // .id(saved.getId())
             .dayOfWeek(saved.getDayOfWeek())
             .startTime(saved.getStartTime())
             .endTime(saved.getEndTime())
@@ -99,18 +101,19 @@ public class DoctorScheduleService {
      * Used by patient to know which days doctor is available.
      */
     public List<DoctorScheduleResponse> getSchedules(Long doctorId) {
+        Optional<Doctor> doctorDetails=this.doctorRepository.findByAuthUserId(doctorId);
 
         log.info("Fetching schedules for doctorId={}", doctorId);
 
         return scheduleRepository
-            .findByDoctorIdAndIsActiveTrue(doctorId)
+            .findByDoctorIdAndIsActiveTrue(doctorDetails.get().getId())
             .stream()
             .map(s -> DoctorScheduleResponse.builder()
-                .id(s.getId())
                 .dayOfWeek(s.getDayOfWeek())
                 .startTime(s.getStartTime())
                 .endTime(s.getEndTime())
                 .slotDurationMins(s.getSlotDurationMins())
+                .message("Available Now")
                 .isActive(s.isActive())
                 .build())
             .toList();
@@ -150,7 +153,7 @@ public class DoctorScheduleService {
         log.info("Schedule deactivated id={}", scheduleId);
 
         return DoctorScheduleResponse.builder()
-            .id(schedule.getId())
+            // .id(schedule.getId())
             .dayOfWeek(schedule.getDayOfWeek())
             .isActive(false)
             .message("Schedule deactivated successfully")

@@ -10,6 +10,6 @@ import com.example.demo1.model.DoctorDetailsToAppointment;
 public interface DoctorFeign {
 	
 	@GetMapping("/doctor/check/{id}")
-	public DoctorDetailsToAppointment sendDoctorDetailsToAppointment(@PathVariable("id") int id);
+	public DoctorDetailsToAppointment sendDoctorDetailsToAppointment(@PathVariable("id") long id);
 
 }

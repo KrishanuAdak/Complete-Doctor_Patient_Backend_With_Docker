@@ -2,18 +2,19 @@ package com.example.demo1.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
 import jakarta.persistence.Version;
-import jakarta.persistence.Column;
 
 @Entity
 @Table(name = "Doctor_Basic_Details")
@@ -27,7 +28,6 @@ public class Doctor implements Serializable {
 
 	@Column(unique = true, nullable = false)
 	private long auth_user_id;
-
 	@Length(min = 2)
 	private String doctor_name;
 	@Length(min = 10, max = 10)

@@ -22,7 +22,9 @@ public class RequestInterceptor implements HandlerInterceptor {
         String secret_key = request.getHeader("X-Secret-Key");
         System.out.println("From Common security -- " + userId + " " + role + " " + secret_key);
         String path = request.getRequestURI();
-        if (path.startsWith("/appointment/v1/appointments/count") || path.contains("/verified-doctor/counts")) {
+        if (path.startsWith("/appointment/v1/appointments/count") 
+            //|| path.contains("/verified-doctor/counts")) 
+    ){
             System.out.println("Skipping authentication for path: " + path);
             return true;
         } 
