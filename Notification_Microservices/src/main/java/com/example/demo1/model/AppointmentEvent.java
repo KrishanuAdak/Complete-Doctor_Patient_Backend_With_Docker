@@ -12,7 +12,6 @@ public class AppointmentEvent {
 	}
 	public AppointmentEvent() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public String getEventType() {
 		return eventType;

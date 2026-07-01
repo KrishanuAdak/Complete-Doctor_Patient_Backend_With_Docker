@@ -15,6 +15,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jdk.jfr.BooleanFlag;
 
 @Entity
 @Table(name = "Doctor_Basic_Details")
@@ -35,13 +39,18 @@ public class Doctor implements Serializable {
 	private String registrationNumber;
 	// Store in s3
 	private String registrationFile_Url;
+	@NotNull
 	private String fileName;
+	@BooleanFlag
 	private boolean isRegistrationVerified;
 	@CreatedDate
 	private LocalDateTime creation_date;
 	private String city;
+	@NotBlank
 	private String speclization;
+	@Min(1)
 	private int experience;
+	@NotNull
 	private String pincode;
 	// optimistic locking for concurrent updates
 	@Version

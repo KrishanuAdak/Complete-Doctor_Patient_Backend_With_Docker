@@ -1,9 +1,11 @@
 package com.example.demo1.repo;
 
 import java.time.LocalDate;
-import com.example.demo1.model.*;
-import java.util.*;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.demo1.model.Doctor_leaves;
 
 
 public interface DoctorLeaveRepo extends JpaRepository<Doctor_leaves,Long> {

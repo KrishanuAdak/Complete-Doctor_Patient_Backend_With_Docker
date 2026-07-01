@@ -1,12 +1,11 @@
 package com.example.demo1.service;
 
+import java.util.List;
 import java.util.Optional;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.example.demo1.dto.DoctorDetailsDTO;
 import com.example.demo1.model.Doctor;
 import com.example.demo1.model.DoctorDetailsToAppointment;
 import com.example.demo1.repo.DoctorRepo;
@@ -64,7 +63,7 @@ public class DoctorService {
 		return data;
 	}
 
-	public int getAllDoctors() {
+	public int getAllDoctorsCount() {
 		try {
 			int count = this.repo.countOfVerifiedDoctors();
 			return count;
@@ -73,45 +72,33 @@ public class DoctorService {
 		return 0;
 
 	}
-
-	@Cacheable(value = "doctors", key = "#id")
-	public Doctor getById(long id) {
-		return this.repo.findById(id).orElseThrow(() -> new RuntimeException("Doctor id not found"));
+	public Optional<Doctor> getDoctorByUserId(long id){
+		return this.repo.findByAuthUserId(id);
 	}
 
-	// Redis
-	@CachePut(value = "doctors", key = "#id")
-	public Doctor updateById(Doctor d, int id) {
-		Doctor s = d;
-		// s.setEmail(d.getEmail());
-		// s.setPassword(d.getPassword());
-		s.setCreation_date(d.getCreation_date());
-		Doctor x = this.repo.save(s);
-		System.out.println(x);
-		return x;
-	}
+	
+	
 
-	@CacheEvict(value = "doctors", key = "#id")
-	public void delete(long id) {
-		this.repo.deleteById(id);
+	// public void updateApprovalStatus(long id, String status) {
+	// 	Doctor d = this.repo.findById(id).orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-	}
+	// 	this.repo.updateApprovalStatusByAdmin(status, id);
 
-	public void updateApprovalStatus(long id, String status) {
-		Doctor d = this.repo.findById(id).orElseThrow(() -> new RuntimeException("Doctor not found"));
-
-		this.repo.updateApprovalStatusByAdmin(status, id);
-
-	}
+	// }
 
 	public long  FindIDByDoctorNameAndCityName(String name,String city) {
 		long id=
 		this.repo.findIdByDoctornameAndCityName(name,city);
-		// if(doctorDetails.isEmpty()){
-		// 	return null;
-		// }
 		return id;
 	
+	}
+	public List<DoctorDetailsDTO> getAllDoctorsByCityAndExperience(String city,int experience){
+		List<DoctorDetailsDTO> lists=this.repo.getApprovedDoctorsList(city, experience);
+		if(lists.isEmpty()){
+			return null;
+		}
+		return lists;
+		
 	}
 
 }

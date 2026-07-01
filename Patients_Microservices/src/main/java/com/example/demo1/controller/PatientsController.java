@@ -46,7 +46,12 @@ public class PatientsController {
 
 	@GetMapping("/patient/{id}")
 	public Patient_Details_To_Admin getPatientsById(@PathVariable("id") int id) {
-	return this.patientsService.getPatientById(id);
+	try {
+		return this.patientsService.getPatientById(id);
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	return null;
 
 	}
 }

@@ -3,7 +3,6 @@ package com.example.demo1.service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +16,15 @@ import com.example.demo1.repo.SmS_Notification_Repo;
 @Service
 public class CosnumeEvent {
 	
-	@Autowired
-	private SmsService smsService;
+	private final SmsService smsService;
 	
-	@Autowired
-	private SmS_Notification_Repo repo;
+	private final SmS_Notification_Repo repo;
+
+
+	public CosnumeEvent(SmsService smsService, SmS_Notification_Repo repo) {
+		this.smsService = smsService;
+		this.repo = repo;
+	}
 	
 	
 	
@@ -33,6 +36,7 @@ public class CosnumeEvent {
 	    System.out.println("New appointment Sms sent to pateint");
 
 	}
+	//check-appointment-by-doctor-approve-reject
 	
 	@KafkaListener(topics="check-appointment-by-doctor-approve-reject",groupId="notification-doctor-patient")
 	public void notifyDoctorAndPatient(AppointmentDetails details)

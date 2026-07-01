@@ -13,3 +13,4 @@ public class AiServiceApplication {
 	}
 
 }
+// docker run -d --name chroma -p 8000:8000 chromadb/chroma:0.5.5

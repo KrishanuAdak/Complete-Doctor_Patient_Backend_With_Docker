@@ -2,7 +2,6 @@ package com.example.demo1.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -16,17 +15,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class TriggerKafkaMessages {
 
-    @Autowired
-    private AppointmentOutboxRepo outboxRepo;
+    private final AppointmentOutboxRepo outboxRepo;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private AppointmentRepo appointmentRepo;
+    private final ObjectMapper objectMapper;
+    private final AppointmentRepo appointmentRepo;
     
-    @Autowired
-    private KafkaTemplate<String,Object> kafkaTemplate;
+    private final KafkaTemplate<String,Object> kafkaTemplate;
 
+    public TriggerKafkaMessages(AppointmentOutboxRepo outboxRepo, AppointmentRepo appointmentRepo, com.fasterxml.jackson.databind.ObjectMapper objectMapper, KafkaTemplate kafkaTemplate) {
+        this.outboxRepo = outboxRepo;
+        this.appointmentRepo = appointmentRepo;
+        this.objectMapper = objectMapper;
+        this.kafkaTemplate = kafkaTemplate;
+    }
+
+    @SuppressWarnings("null")
     @Scheduled(fixedRate = 5000)
     public void triggerKafkaMessage() {
 

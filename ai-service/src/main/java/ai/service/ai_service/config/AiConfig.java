@@ -40,7 +40,7 @@ public class AiConfig {
     @Value("${spring.ai.openai.api-key}")
     public String apiKey;
 
-    @Value("${rag.ingest-on-startup:true}")
+    @Value("${rag.ingest-on-startup:false}")
     public boolean ingestOnStartup;
 
     @Value("${rag.source-path:rag.pdf}")

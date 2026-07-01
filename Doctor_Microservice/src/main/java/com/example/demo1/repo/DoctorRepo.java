@@ -1,5 +1,6 @@
 package com.example.demo1.repo;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.example.demo1.dto.DoctorDetailsDTO;
 import com.example.demo1.model.Doctor;
 import com.example.demo1.model.DoctorDetailsToAppointment;
 
@@ -31,8 +33,6 @@ public interface DoctorRepo extends JpaRepository<Doctor,Long> {
     public long findIdByDoctornameAndCityName(String doctor_name , String city);
 	
 	
-	// @Query(value="select approval_status from doctor_list where doctor_name=?1",nativeQuery=true)
-	// public String checkApprovalStatus(String doctor_name);
 	
 	@Modifying
 	@Transactional
@@ -40,13 +40,14 @@ public interface DoctorRepo extends JpaRepository<Doctor,Long> {
 	public void updateApprovalStatusByAdmin(String approval_status,long id);
 	
 
-	
-
 	@Query(value="select count(*) from doctor_basic_details where is_Registration_Verified = true ",nativeQuery=true)
 	public int countOfVerifiedDoctors();
  
     @Query(value="select * from Doctor_Basic_Details where auth_user_id=?1",nativeQuery=true)
 	public Optional<Doctor> findByAuthUserId(Long authUserId);
+
+    @Query(value="select doctor_name,phone_number,city,experience,speclization from doctor_basic_details where is_Registration_Verified=true and (city=?1 or city is null) and experience<=?2",nativeQuery=true)
+	public List<DoctorDetailsDTO> getApprovedDoctorsList(String city,int experience);
 	
 
 }
