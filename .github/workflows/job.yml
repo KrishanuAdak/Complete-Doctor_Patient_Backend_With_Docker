@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  AWS_REGION: ap-south-1
+  AWS_REGION: ap-south-2
   ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
 
 jobs:
