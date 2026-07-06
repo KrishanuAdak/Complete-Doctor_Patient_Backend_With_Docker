@@ -98,7 +98,7 @@ public class GatewayConfig {
 
                                 // Auth Service (public)
                                 .route("auth-service", r -> r.path("/auth-service/**")
-                                                .filters(f -> f.filter(jwtAuthenticationFilter))
+                                               // .filters(f -> f.filter(jwtAuthenticationFilter))
                                                 .uri("lb://auth-service"))
 
                                 // Appointment Service
