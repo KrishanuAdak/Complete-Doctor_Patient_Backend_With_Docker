@@ -142,13 +142,33 @@ jobs:
 
             aws ecr get-login-password --region "$AWS_REGION" | docker login --username AWS --password-stdin "$ECR_REGISTRY"
 
+            echo "===== DISK USAGE BEFORE CLEANUP ====="
+            df -h /
+            docker system df
+
+            echo "===== PULLING NEW IMAGES ====="
             docker compose pull
 
+            echo "===== RESTARTING CONTAINERS ====="
+            docker compose down
             docker compose up -d
 
             sleep 60
 
             docker compose ps
+
+            echo "===== CLEANING UP OLD IMAGES AND SPACE ====="
+            # Only prune now that the new stack is confirmed up, so a failed
+            # pull never leaves this box with zero usable images.
+            docker image prune -af
+            docker container prune -f
+            docker builder prune -af
+            docker volume prune -f
+            docker network prune -f
+
+            echo "===== DISK USAGE AFTER CLEANUP ====="
+            df -h /
+            docker system df
 
             echo "===== DEPLOYMENT COMPLETED ====="
 

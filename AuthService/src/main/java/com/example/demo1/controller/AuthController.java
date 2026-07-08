@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo1.model.AuthDB;
 import com.example.demo1.service.AuthService;
 import com.example.demo1.util.JwtUtil;
@@ -29,7 +30,7 @@ public class AuthController {
 	private final AuthService service;
 	private final JwtUtil jwtUtil;
 
-	AuthController(AuthService service, JwtUtil jwtUtil) {
+	public AuthController(AuthService service, JwtUtil jwtUtil) {
 		this.service = service;
 		this.jwtUtil = jwtUtil;
 	}
