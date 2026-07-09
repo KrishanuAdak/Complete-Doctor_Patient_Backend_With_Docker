@@ -5,7 +5,6 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.example.demo1.repo.AuthRepo;
@@ -16,10 +15,13 @@ import io.jsonwebtoken.security.Keys;
 
 @Component
 public class JwtUtil {
-	@Autowired
-	private AuthRepo repo;
+	private final AuthRepo repo;
 	
 	private final String SECRET_KEY="hfihsdfiuifh8098nofhfhfih@hoihfohhkoolvhhncvbkhihdifheioheoe0fe0ehiheurjhfhfksnbsdnsdfsijfhihfsdjhbfsigfsfifsfsff";
+
+	public JwtUtil(AuthRepo repo) {
+		this.repo = repo;
+	}
 	public SecretKey getSigningKey() {
 		return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 		

@@ -88,13 +88,13 @@ services:
     depends_on:
       eureka:
         condition: service_started
-      mysql:
-        condition: service_healthy
+      # mysql:
+      #   condition: service_healthy
       kafka:
         condition: service_started
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DOCKER_DB_NAME}
+      SPRING_DATASOURCE_URL: jdbc:mysql://${DOCKER_DB_HOST}:3306/${DOCKER_DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}
       SPRING_PROFILES_ACTIVE: docker
@@ -109,11 +109,11 @@ services:
     depends_on:
       eureka:
         condition: service_started
-      mysql:
-        condition: service_healthy
+      # mysql:
+      #   condition: service_healthy
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DOCKER_DB_NAME}
+      SPRING_DATASOURCE_URL: jdbc:mysql://${DOCKER_DB_HOST}:3306/${DOCKER_DB_NAME}
       SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}
       SPRING_PROFILES_ACTIVE: docker

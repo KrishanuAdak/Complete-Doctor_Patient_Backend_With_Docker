@@ -109,6 +109,8 @@ jobs:
           DOCKER_DB_USERNAME: ${{ secrets.DOCKER_DB_USERNAME }}
           DOCKER_DB_PASSWORD: ${{ secrets.DOCKER_DB_PASSWORD }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DOCKER_DB_HOST: ${{ secrets.DOCKER_DB_HOST }}
+
 
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -117,7 +119,7 @@ jobs:
           port: 22
           timeout: 60s
           command_timeout: 30m
-          envs: REPO_URL,ECR_REGISTRY,AWS_REGION,DOCKER_DB_NAME,DOCKER_DB_USERNAME,DOCKER_DB_PASSWORD,OPENAI_API_KEY
+          envs: REPO_URL,ECR_REGISTRY,AWS_REGION,DOCKER_DB_HOST,DOCKER_DB_NAME,DOCKER_DB_USERNAME,DOCKER_DB_PASSWORD,OPENAI_API_KEY
 
           script: |
             set -e
@@ -133,8 +135,9 @@ jobs:
             git fetch origin
             git reset --hard origin/main
 
-            printf "ECR_URL=%s\nDOCKER_DB_NAME=%s\nDOCKER_DB_USERNAME=%s\nDOCKER_DB_PASSWORD=%s\nOPENAI_API_KEY=%s\n" \
+            printf "ECR_URL=%s\nDOCKER_DB_HOST=%s\nDOCKER_DB_NAME=%s\nDOCKER_DB_USERNAME=%s\nDOCKER_DB_PASSWORD=%s\nOPENAI_API_KEY=%s\n" \
             "$ECR_REGISTRY" \
+            "$DOCKER_DB_HOST" \
             "$DOCKER_DB_NAME" \
             "$DOCKER_DB_USERNAME" \
             "$DOCKER_DB_PASSWORD" \
