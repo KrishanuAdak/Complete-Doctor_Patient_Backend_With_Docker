@@ -10,7 +10,7 @@ import com.example.demo1.model.Appointment_outbox_events;
 
 @Repository
 public interface AppointmentOutboxRepo extends JpaRepository<Appointment_outbox_events, Integer> {
-    @Query(value="SELECT * FROM Appointment_outbox_events  WHERE status = ?1 order by created_at asc limit 50",nativeQuery=true)
+    @Query(value="SELECT * FROM Appointment_outbox  WHERE status = ?1 order by created_at asc limit 50",nativeQuery=true)
     public List<Appointment_outbox_events> findAllByStatus(String status);
 
 }
