@@ -45,7 +45,7 @@ public class GatewayConfig {
                 privateConfig.setAllowedOrigins(List.of(
                                 "http://localhost:4200",
                                 "https://appointment-easy-bengal.in",
-                               "https://www.appointment-easy-bengal.in"   // ✅ add this — your actual frontend origin
+                                "https://www.appointment-easy-bengal.in"   // ✅ add this — your actual frontend origin
                 ));
                 privateConfig.addAllowedHeader("*");
                 privateConfig.addAllowedMethod("*");
@@ -55,7 +55,7 @@ public class GatewayConfig {
 
                 // ✅ AI route first — more specific paths first
                 source.registerCorsConfiguration("/ai/**", publicConfig);
-                source.registerCorsConfiguration("/auth-service/**", publicConfig);
+                source.registerCorsConfiguration("/auth-service/**", privateConfig);
                 source.registerCorsConfiguration("/notification/**", publicConfig);
 
                 // ✅ Authenticated routes
