@@ -44,7 +44,9 @@ public class GatewayConfig {
                 privateConfig.setAllowCredentials(true);
                 privateConfig.setAllowedOrigins(List.of(
                                 "http://localhost:4200",
-                                "https://appointment-easy-bengal.in"));
+                                "https://appointment-easy-bengal.in",
+                               "https://www.appointment-easy-bengal.in"   // ✅ add this — your actual frontend origin
+                ));
                 privateConfig.addAllowedHeader("*");
                 privateConfig.addAllowedMethod("*");
                 privateConfig.setMaxAge(3600L);
