@@ -50,7 +50,7 @@ jobs:
           mvn clean package -DskipTests
       - name: Build Doctor Service
         run:  |
-          cd doctor-service
+          cd Doctor_Microservice
           mvn clean package -DskipTests
 
       - name: Build AI Service
