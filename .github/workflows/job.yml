@@ -48,6 +48,10 @@ jobs:
         run: |
           cd Api_Gateway_Microservices
           mvn clean package -DskipTests
+      - name: Build Doctor Service
+        run:  |
+          cd doctor-service
+          mvn clean package -DskipTests
 
       - name: Build AI Service
         run: |
@@ -98,6 +102,13 @@ jobs:
           docker build -t ai-service .
           docker tag ai-service:latest $ECR_REGISTRY/ai-service:latest
           docker push $ECR_REGISTRY/ai-service:latest
+
+      - name: Build and PUSH DOCTOR SERVICE
+        run: |
+          cd doctor-service
+          docker build -t doctor-service .
+          docker tag doctor-service:latest $ECR_REGISTRY/doctor-service:latest
+          docker push $ECR_REGISTRY/doctor-service:latest
 
       - name: Deploy To EC2
         uses: appleboy/ssh-action@v1.0.3

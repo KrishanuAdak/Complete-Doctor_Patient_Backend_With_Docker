@@ -70,7 +70,7 @@ public class AuthConfiguration {
 	@Bean
 	public SecurityFilterChain secureHttps(HttpSecurity http) throws Exception {
 		try {
-			http.csrf().disable().authorizeHttpRequests(auth -> auth.requestMatchers("/auth-service/**","actuator/**").permitAll()
+			http.csrf().disable().authorizeHttpRequests(auth -> auth.requestMatchers("/auth-service/**","/actuator/**").permitAll()
 					.anyRequest().authenticated())
 					.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 					.exceptionHandling(ex -> ex.accessDeniedHandler(new AuthAccessDeniedHandler()));

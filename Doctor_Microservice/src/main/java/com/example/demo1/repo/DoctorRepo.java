@@ -46,7 +46,7 @@ public interface DoctorRepo extends JpaRepository<Doctor,Long> {
     @Query(value="select * from Doctor_Basic_Details where auth_user_id=?1",nativeQuery=true)
 	public Optional<Doctor> findByAuthUserId(Long authUserId);
 
-    @Query(value="select doctor_name,phone_number,city,experience,speclization from doctor_basic_details where is_Registration_Verified=true and (city=?1 or city is null) and experience<=?2",nativeQuery=true)
+    @Query(value="select doctor_name,phone_number,city,experience,speclization from doctor_basic_details where is_Registration_Verified=true and (city=?1 or ?1 is null) and (?2 is null or experience<=?2)",nativeQuery=true)
 	public List<DoctorDetailsDTO> getApprovedDoctorsList(String city,int experience);
 	
 

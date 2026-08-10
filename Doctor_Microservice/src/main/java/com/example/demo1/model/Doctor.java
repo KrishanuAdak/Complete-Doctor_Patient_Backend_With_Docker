@@ -37,10 +37,6 @@ public class Doctor implements Serializable {
 	@Length(min = 10, max = 10)
 	private String phone_number;
 	private String registrationNumber;
-	// Store in s3
-	private String registrationFile_Url;
-	@NotNull
-	private String fileName;
 	@BooleanFlag
 	private boolean isRegistrationVerified;
 	@CreatedDate
@@ -60,7 +56,7 @@ public class Doctor implements Serializable {
 	}
 
 	public Doctor(long id, int auth_user_id, String doctor_name, String phone_number, String registrationNumber,
-			String registrationFile_Url, String fileName, boolean isRegistrationVerified,
+			 boolean isRegistrationVerified,
 			LocalDateTime creation_date, String city, String speclization, int experience, String pincode,
 			Integer version) {
 		this.id = id;
@@ -68,8 +64,6 @@ public class Doctor implements Serializable {
 		this.doctor_name = doctor_name;
 		this.phone_number = phone_number;
 		this.registrationNumber = registrationNumber;
-		this.registrationFile_Url = registrationFile_Url;
-		this.fileName = fileName;
 		this.isRegistrationVerified = isRegistrationVerified;
 		this.creation_date = creation_date;
 		this.city = city;
@@ -123,21 +117,9 @@ public class Doctor implements Serializable {
 		this.registrationNumber = registrationNumber;
 	}
 
-	public String getRegistrationFile_Url() {
-		return registrationFile_Url;
-	}
+	
 
-	public void setRegistrationFile_Url(String registrationFile_Url) {
-		this.registrationFile_Url = registrationFile_Url;
-	}
-
-	public String getFileName() {
-		return fileName;
-	}
-
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+	
 
 	public boolean isRegistrationVerified() {
 		return isRegistrationVerified;

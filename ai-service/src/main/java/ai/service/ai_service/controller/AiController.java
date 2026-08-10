@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ai.service.ai_service.ToolCalling.AppointmentAgent;
 
 @RestController
+
 public class AiController {
 
     private final AppointmentAgent agent;

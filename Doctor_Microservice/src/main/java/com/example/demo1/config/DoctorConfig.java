@@ -2,8 +2,6 @@ package com.example.demo1.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.lang.NonNull;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,7 +29,7 @@ public class DoctorConfig {
 			@Override
 			public void addCorsMappings(@NonNull CorsRegistry registry) {
 				registry.addMapping("/api/**") // Adjust path as needed
-						.allowedOrigins("http://localhost:4200")
+						//.allowedOrigins("http://localhost:4200")
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedHeaders("*")
 						.allowCredentials(true);
@@ -52,14 +50,6 @@ public class DoctorConfig {
 	}
 
 	
-	@Bean
-	public RedisTemplate redisTemplate(RedisConnectionFactory factory) throws Exception {
-		RedisTemplate redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(factory);
-		// redisTemplate.setKeySerializer(new RedisSerializer());
-		// redisTemplate.setValueSerializer(new RedisSerializer());
-		return redisTemplate;
-
-	}
+	
 	
 }

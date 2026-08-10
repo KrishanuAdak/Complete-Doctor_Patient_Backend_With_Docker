@@ -137,6 +137,25 @@ services:
       CHROMA_URL: http://chromadb:8000
     networks:
       - app-network
+  doctor-service:
+    image: ${ECR_URL}/doctor-service:latest
+    ports:
+      - "7002:7002"
+    depends_on:
+      eureka:
+        condition: service_started
+      chromadb:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka:8761/eureka/
+      SPRING_DATASOURCE_URL: jdbc:mysql://${DOCKER_DB_HOST}:3306/${DOCKER_DB_NAME}
+      SPRING_APPLICATION_NAME: doctor-service
+      SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}    
+
+    networks:
+      - app-network
 
 networks:
   app-network:

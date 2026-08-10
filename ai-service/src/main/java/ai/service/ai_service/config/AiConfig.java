@@ -119,7 +119,9 @@ public class AiConfig {
     @Bean
     public EmbeddingStore<TextSegment> embeddingStore() {
         return ChromaEmbeddingStore.builder()
-                .baseUrl("http://localhost:8000")
+               // .baseUrl("http://localhost:8000")
+               // .apiVersion()
+               .baseUrl("http://chromadb:8000")
                 .collectionName("appointment-easy-rag")
                 .build();
     }

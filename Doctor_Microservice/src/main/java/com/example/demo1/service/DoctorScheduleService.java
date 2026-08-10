@@ -102,7 +102,6 @@ public class DoctorScheduleService {
      */
     public List<DoctorScheduleResponse> getSchedules(Long doctorId) {
         Optional<Doctor> doctorDetails=this.doctorRepository.findByAuthUserId(doctorId);
-
         log.info("Fetching schedules for doctorId={}", doctorId);
 
         return scheduleRepository

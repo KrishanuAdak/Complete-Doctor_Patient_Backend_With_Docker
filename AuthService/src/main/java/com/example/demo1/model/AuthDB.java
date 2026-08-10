@@ -1,12 +1,21 @@
 package com.example.demo1.model;
+import java.time.LocalDate;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType ;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 @Entity
+@Table(name="authdb",indexes={
+	@Index(name="user_email",columnList="email")
+}
+)
 public class AuthDB {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -18,6 +27,15 @@ public class AuthDB {
 	private String password;
 	private String role;
 	private String username;
+	private LocalDate createdAt;
+
+	@PrePersist
+	protected void onCreate(){
+		createdAt=LocalDate.now();
+	
+	}
+
+	
 	
 	public long getId() {
 		return id;
@@ -46,6 +64,7 @@ public class AuthDB {
 	
 	
 	
+	
 	public AuthDB(long id, String email, String password, String role,String username) {
 		super();
 		this.id = id;
@@ -58,13 +77,24 @@ public class AuthDB {
 	
 	public AuthDB() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public String getUsername() {
 		return username;
 	}
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+
+
+	public LocalDate getCreatedAt() {
+		return createdAt;
+	}
+
+
+
+	public void setCreatedAt(LocalDate createdAt) {
+		this.createdAt = createdAt;
 	}
 	
 

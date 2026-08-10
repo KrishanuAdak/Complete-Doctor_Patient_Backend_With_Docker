@@ -1,7 +1,6 @@
 package com.example.demo1.controller;
 
  
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.demo1.dto.Appointment_Dto;
 import com.example.demo1.model.Appointment_book_by_Patient;
+import com.example.demo1.openFiegn.DoctorFeign;
 import com.example.demo1.service.Appointment_booked_service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -28,14 +29,23 @@ public class Appointment_Controller {
 
 	private final Appointment_booked_service service;
 
-	@Value("${server.port}")
-	private String port;
+	private final DoctorFeign doctorFeign;
 
-
-	public Appointment_Controller(Appointment_booked_service service) {
+	public Appointment_Controller(Appointment_booked_service service,DoctorFeign doctorFeign) {
 		this.service = service;
+		this.doctorFeign = doctorFeign;
 	}
-	
+	@PreAuthorize("hasRole('PATIENT')")
+	@GetMapping("v1/doctors/list")
+	public ResponseEntity<?> fetchAllDoctors(@RequestParam(required = false) String city, @RequestParam(required = false) int experience){
+		
+		try {
+			return ResponseEntity.ok(this.doctorFeign.getAllDoctorsByCityAndExperience(city,experience));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
 
 
 	

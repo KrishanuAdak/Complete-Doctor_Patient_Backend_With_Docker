@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "LambdaUploadDocumentServiceApplication",
+            "request": "launch",
+            "mainClass": "com.example.lambda_upload_document_service.LambdaUploadDocumentServiceApplication",
+            "projectName": "lambda-upload-document-service"
+        },
+        {
+            "type": "java",
+            "name": "BasicSecurityApplication",
+            "request": "launch",
+            "mainClass": "BasicSecurityApplication",
+            "projectName": "DoctorService"
+        },
+        {
+            "type": "java",
             "name": "PaymentsServiceApplication",
             "request": "launch",
             "mainClass": "com.example.demo1.PaymentsServiceApplication",

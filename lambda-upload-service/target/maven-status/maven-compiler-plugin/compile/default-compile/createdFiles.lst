@@ -1,0 +1,3 @@
+com/example/lambda_upload_document_service/handler/LambdaRequestHandler.class
+com/example/lambda_upload_document_service/model/UploadEvent.class
+com/example/lambda_upload_document_service/repo/DocumentUploadRepository.class

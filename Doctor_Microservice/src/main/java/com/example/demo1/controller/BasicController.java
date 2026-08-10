@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo1.dto.DoctorDetailsDTO;
-import com.example.demo1.model.Doctor;
+import com.example.demo1.dto.DoctorBasicDetailsRequest;
+import com.example.demo1.dto.DoctorDetailsDTO_Redis;
+import com.example.demo1.dto.DoctorBasicDetailsResponse;
 import com.example.demo1.model.DoctorDetailsToAppointment;
 import com.example.demo1.service.DoctorService;
 
@@ -45,14 +46,14 @@ public class BasicController {
 
 	@PostMapping("/save-basic-details")
 	public ResponseEntity<?> registerDoctor(@RequestHeader("X-User-Role") String role,
-			@RequestBody Doctor d,
+			@RequestBody DoctorBasicDetailsRequest d,
 			@RequestHeader("X-User-Id") String userId) {
 		log.info("controller hitted");
 		try {
 			if (role.equalsIgnoreCase("doctor")) {
-				log.info("before saved ---");
-				Optional<Doctor> doctor = this.service.saveBasicDetails(d, Long.parseLong(userId));
-				log.info("saved ---");
+				log.info("--- before saved ---");
+				Optional<DoctorBasicDetailsResponse> doctor =this.service.saveOrUpdateBasicDetails(d, Long.parseLong(userId));
+				log.info("--- saved ---");
 				return doctor.isEmpty() ? ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to save details ")
 						: ResponseEntity.status(HttpStatus.OK).body(doctor);
 			}
@@ -77,19 +78,18 @@ public class BasicController {
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(data);
 	}
-
 	@GetMapping("/fetch/list")
 	public ResponseEntity<?> getAllDoctorListByCityAndExperience(@RequestParam(required = false) String city,
 			@RequestParam(required = false) int experience) {
 		try {
-			List<DoctorDetailsDTO> lists = this.service.getAllDoctorsByCityAndExperience(city, experience);
+			List<DoctorDetailsDTO_Redis> lists = this.service.getAllDoctorsByCityAndExperience(city, experience);
 			if (lists.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.OK).body("No Doctors Found");
 			}
 			return ResponseEntity.status(HttpStatus.OK).body(lists);
 
 		} catch (Exception e) {
-			return ResponseEntity.internalServerError().body("No doctors found.");
+			return ResponseEntity.internalServerError().body(e.getMessage());
 
 		}
 
